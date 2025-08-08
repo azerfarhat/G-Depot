@@ -1,0 +1,474 @@
+/* src/app/pages/facture-list/facture-list.component.css */
+
+/* === VARIABLES CSS === */
+:host {
+  --primary-color: #4a90e2;
+  --primary-dark: #357abd;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --white: #ffffff;
+  --border-color: #dee2e6;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* === RESET ET BASE === */
+* {
+  box-sizing: border-box;
+}
+
+/* === BARRE GRADIENT EN HAUT === */
+.top-gradient-bar {
+  height: 6px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark), #2c5282);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+/* === CONTENEUR PRINCIPAL === */
+.facture-list-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* === HEADER DE CARTE === */
+.card-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--white);
+  padding: 32px;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.card-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+/* === SECTION ACTIONS === */
+.actions {
+  background: var(--white);
+  padding: 24px 32px;
+  border-left: 1px solid rgba(0,0,0,0.05);
+  border-right: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.actions select {
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  transition: var(--transition);
+  background: var(--white);
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.actions select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* === CARTE DE CONTENU === */
+.content-card {
+  background: var(--white);
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* === WRAPPER TABLEAU === */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* === TABLEAU === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: linear-gradient(135deg, var(--light-color), #f0f0f0);
+}
+
+th {
+  padding: 20px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--secondary-color);
+  border-bottom: 2px solid var(--border-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+td {
+  padding: 20px 16px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: linear-gradient(135deg, #fafafa, #f8f9fa);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* === STYLES SPÉCIFIQUES DES CELLULES === */
+/* N° Facture */
+td:nth-child(1) {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 13px;
+}
+
+td:nth-child(1)::before {
+  content: '#';
+  opacity: 0.7;
+  margin-right: 2px;
+}
+
+/* Client/Chauffeur */
+td:nth-child(2) {
+  font-weight: 600;
+  color: var(--dark-color);
+  max-width: 200px;
+}
+
+/* Commande/BDS ID */
+td:nth-child(3) {
+  color: var(--secondary-color);
+}
+
+td:nth-child(3) a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(74, 144, 226, 0.1);
+  transition: var(--transition);
+}
+
+td:nth-child(3) a:hover {
+  background: rgba(74, 144, 226, 0.2);
+  transform: scale(1.05);
+}
+
+/* Dates */
+td:nth-child(4),
+td:nth-child(5) {
+  color: var(--secondary-color);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Total TTC */
+td:nth-child(6) {
+  font-weight: 700;
+  color: var(--success-color);
+  font-size: 15px;
+  text-align: right;
+}
+
+/* === BADGES DE STATUT === */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-emise {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
+  color: #b8860b;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.status-payee {
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+  color: #155724;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.status-annulee {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
+  color: #721c24;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+/* === CELLULE ACTIONS === */
+.actions-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 2px;
+  transition: var(--transition);
+  background: var(--light-color);
+  color: var(--secondary-color);
+  text-decoration: none;
+  position: relative;
+}
+
+.icon-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Bouton Voir détails */
+.icon-button[title*="Voir"] {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1976d2;
+}
+
+/* Bouton Marquer Payée */
+.icon-button[title*="Marquer"] {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  color: #388e3c;
+}
+
+/* Bouton Annuler */
+.icon-button[title*="Annuler"]:not([title*="Remboursement"]) {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  color: #d32f2f;
+}
+
+/* Bouton Remboursement */
+.icon-button[title*="Remboursement"] {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  color: #f57c00;
+}
+
+/* === MESSAGE AUCUNE DONNÉE === */
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: var(--secondary-color);
+  font-style: italic;
+  font-size: 16px;
+  background: linear-gradient(135deg, #fafafa, #f0f0f0);
+  border: 2px dashed var(--border-color);
+}
+
+/* === TOOLTIPS === */
+.icon-button::before {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark-color);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 1000;
+}
+
+.icon-button:hover::before {
+  opacity: 1;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .facture-list-container {
+    padding: 0 16px;
+  }
+  
+  .card-header {
+    padding: 24px;
+  }
+  
+  .card-header h2 {
+    font-size: 20px;
+  }
+  
+  .actions {
+    padding: 20px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .actions select {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  table {
+    font-size: 12px;
+  }
+  
+  th, td {
+    padding: 12px 8px;
+  }
+  
+  .icon-button {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  /* Masquer les tooltips sur mobile */
+  .icon-button::before {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  th, td {
+    padding: 8px 4px;
+  }
+  
+  .icon-button {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    margin: 0 1px;
+  }
+  
+  .status-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+    min-width: 60px;
+  }
+  
+  td:nth-child(2) {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* === SCROLLING HORIZONTAL === */
+@media (max-width: 1024px) {
+  table {
+    min-width: 800px;
+  }
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+tbody tr {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* === ÉTATS DE FOCUS === */
+.actions select:focus,
+.icon-button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* === AMÉLIORATION VISUELLE === */
+.card-header {
+  background-attachment: fixed;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(248, 249, 250, 0.3);
+}
+
+tbody tr:nth-child(even):hover {
+  background: linear-gradient(135deg, #fafafa, #f8f9fa);
+}
+
+/* === INDICATEURS SPÉCIAUX === */
+td:nth-child(5) {
+  position: relative;
+}
+
+/* Indicateur de facture en retard (à ajouter via classe conditionnelle) */
+.overdue {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.05), rgba(220, 53, 69, 0.02)) !important;
+  border-left: 4px solid var(--danger-color);
+}
+
+.overdue td:nth-child(5) {
+  color: var(--danger-color);
+  font-weight: 700;
+}
+
+/* === ACCESSIBILITÉ === */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

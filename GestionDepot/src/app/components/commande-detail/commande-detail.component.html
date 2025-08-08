@@ -1,0 +1,77 @@
+<div class="commande-detail-container">
+  <button class="back-button" (click)="router.navigate(['/commandes'])">Retour à la liste</button>
+
+  @if (commande) { <!-- Nouvelle syntaxe @if -->
+    <h2>Détails de la Commande #{{ commande.id }}</h2>
+    <div class="commande-info">
+      <p><strong>Client:</strong> {{ commande.client?.nom || 'N/A' }} ({{ commande.client?.email || 'N/A' }})</p>
+      <p><strong>Date de Commande:</strong> {{ commande.dateCommande | date:'medium' }}</p>
+      <p><strong>Statut:</strong> {{ commande.statutCommande }}</p>
+      <p><strong>Total TTC:</strong> {{ commande.totaleCommandeTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+    </div>
+
+    <h3>Lignes de Commande</h3>
+    @if (commande.lignes.length > 0) { <!-- Nouvelle syntaxe @if -->
+      <table class="lignes-table">
+        <thead>
+          <tr>
+            <th>ID Ligne</th>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix Total Ligne TTC</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ligne of commande.lignes; track ligne.id) { <!-- Nouvelle syntaxe @for -->
+            <tr>
+              <td>{{ ligne.id }}</td>
+              <td>{{ ligne.nomProduit }} (ID: {{ ligne.produitId }})</td>
+              <td>{{ ligne.quantite }}</td>
+              <td>{{ ligne.prixVenteTotalLigneTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>
+                @if (commande.statutCommande === 'EN_COURS') { <!-- Nouvelle syntaxe @if -->
+                  <button (click)="initModifierLigne(ligne.id, ligne.quantite)">Modifier Quantité</button>
+                  <button (click)="supprimerLigne(ligne.id)">Supprimer</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else { <!-- Nouvelle syntaxe @else pour le cas où la liste est vide -->
+      <p>Aucune ligne dans cette commande.</p>
+    }
+
+
+    @if (commande.statutCommande === 'EN_COURS') { <!-- Nouvelle syntaxe @if -->
+      <div class="ligne-forms">
+        <h3>Ajouter une nouvelle ligne</h3>
+        <div class="form-group">
+          <label for="produitId">Produit:</label>
+          <select id="produitId" [(ngModel)]="nouvelleLigneProduitId">
+            <option [ngValue]="undefined">-- Sélectionner un produit --</option>
+            @for (produit of produitsList; track produit.id) {
+              <option [ngValue]="produit.id">{{ produit.nom }} (ID: {{ produit.id }})</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="quantiteAdd">Quantité:</label>
+          <input type="number" id="quantiteAdd" [(ngModel)]="nouvelleLigneQuantite" placeholder="Quantité" />
+        </div>
+        <button (click)="ajouterLigne()">Ajouter Ligne</button>
+
+        @if (ligneAModifierId) { <!-- Nouvelle syntaxe @if -->
+          <h3>Modifier quantité de la ligne #{{ ligneAModifierId }}</h3>
+          <div class="form-group">
+            <label for="nouvelleQuantite">Nouvelle Quantité:</label>
+            <input type="number" id="nouvelleQuantite" [(ngModel)]="nouvelleQuantiteLigne" placeholder="Nouvelle Quantité" />
+          </div>
+          <button (click)="mettreAJourQuantiteLigne()">Mettre à jour Quantité</button>
+          <button (click)="resetModifierLigneForm()">Annuler Modification</button>
+        }
+      </div>
+    }
+  }
+</div>

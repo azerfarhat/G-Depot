@@ -1,0 +1,70 @@
+<div class="facture-detail-container">
+  <button class="back-button" routerLink="/factures">Retour à la liste des Factures</button>
+
+  @if (facture) {
+    <h2>Détails de la Facture #{{ facture.id }} ({{ facture.numeroFacture }})</h2>
+    
+    <div class="facture-info">
+      <p><strong>N° Facture:</strong> {{ facture.numeroFacture }}</p>
+      <p><strong>Client:</strong> 
+        @if (facture.client) {
+          {{ facture.client.nom }} ({{ facture.client.email }})
+        } @else {
+          N/A
+        }
+      </p>
+      <p><strong>Chauffeur:</strong> 
+        @if (facture.chauffeur) {
+          {{ facture.chauffeur.nom }} ({{ facture.chauffeur.email }})
+        } @else {
+          N/A
+        }
+      </p>
+      <p><strong>Date Facturation:</strong> {{ facture.dateFacturation | date:'mediumDate' }}</p>
+      <p><strong>Date Échéance:</strong> {{ facture.dateEcheance | date:'mediumDate' }}</p>
+      <p><strong>Statut:</strong> 
+        <span class="status-badge" 
+              [class.status-emise]="facture.statut === StatutFacture.EMISE"
+              [class.status-payee]="facture.statut === StatutFacture.PAYEE"
+              [class.status-annulee]="facture.statut === StatutFacture.ANNULEE">
+          {{ facture.statut }}
+        </span>
+      </p>
+      <p><strong>Total HT:</strong> {{ facture.totalHT | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Montant TVA:</strong> {{ facture.montantTVA | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Total TTC:</strong> {{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Commande ID:</strong> 
+        @if (facture.commandeId) {
+          <a [routerLink]="['/commandes', facture.commandeId]">{{ facture.commandeId }}</a>
+        } @else {
+          N/A
+        }
+      </p>
+      <p><strong>Bon de Sortie ID:</strong> 
+        @if (facture.bonDeSortieId) {
+          <a [routerLink]="['/bons-de-sortie', facture.bonDeSortieId]">{{ facture.bonDeSortieId }}</a>
+        } @else {
+          N/A
+        }
+      </p>
+    </div>
+
+    <div class="facture-actions">
+      <h3>Actions sur la Facture</h3>
+      @if (facture.statut === StatutFacture.EMISE) {
+        <button class="btn btn-success" (click)="updateStatut(StatutFacture.PAYEE)">Marquer Payée</button>
+        <button class="btn btn-danger" (click)="updateStatut(StatutFacture.ANNULEE)">Annuler Facture</button>
+      } @else if (facture.statut === StatutFacture.PAYEE) {
+        <button class="btn btn-warning" (click)="updateStatut(StatutFacture.ANNULEE)">Annuler (Rembourser)</button>
+      }
+    </div>
+
+    <!-- Si vous avez des lignes de facture, décommenter et afficher ici -->
+    <!-- (Le code pour les lignes de facture dans ce HTML est commenté par défaut,
+         car votre FactureResponseDto actuel ne les renvoie pas. 
+         Si vous les ajoutez, décommentez et assurez-vous que les types sont corrects) -->
+
+  } @else {
+    <p>Chargement des détails de la Facture...</p>
+  }
+</div>

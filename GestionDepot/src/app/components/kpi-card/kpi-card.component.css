@@ -1,0 +1,80 @@
+/* === MODERN KPI CARD === */
+.kpi-card {
+  background: linear-gradient(135deg, #f8fbff 80%, #eaf4fd 100%);
+  border: 1.5px solid #bcdffb;
+  border-radius: 16px;
+  padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(74,144,226,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 170px;
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.kpi-card:hover {
+  box-shadow: 0 6px 24px rgba(74,144,226,0.13);
+  transform: translateY(-2px) scale(1.02);
+}
+.kpi-card h3 {
+  color: #357abd;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.7rem 0;
+  letter-spacing: 0.5px;
+}
+.kpi-card .value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+.kpi-card .change {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.change.positive { color: #28a745; }
+.change.negative { color: #dc3545; }
+.kpi-card.warning .value, .kpi-card.warning .change { color: #F97316; }
+.kpi-card .icon {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  font-size: 2.2rem;
+  color: #bcdffb;
+  opacity: 0.7;
+}
+/* kpi-card.component.css */
+.kpi-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem; /* 12px */
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+.kpi-card h3 {
+  color: var(--text-secondary);
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+.kpi-card .value {
+  font-size: 2.25rem; /* 36px */
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+.kpi-card .change {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.change.positive { color: #10B981; }
+.change.negative { color: #EF4444; }
+.kpi-card.warning .value, .kpi-card.warning .change { color: #F97316; }

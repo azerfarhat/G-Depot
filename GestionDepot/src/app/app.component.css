@@ -1,0 +1,11 @@
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr; /* Colonne fixe pour le menu, le reste pour le contenu */
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.main-content {
+  overflow-y: auto; /* Permet de scroller le contenu si nécessaire */
+  padding: 2.5rem;
+}

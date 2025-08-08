@@ -1,0 +1,83 @@
+<!-- On ne met le conteneur que si les données sont chargées et sans erreur -->
+<div *ngIf="!isLoading && !error && dashboardData" class="dashboard-container">
+  
+  <header class="dashboard-header">
+    <h1>Tableau de Bord</h1>
+    <p >Vue d'ensemble de votre système de gestion de dépôt</p>
+  </header>
+  
+
+<section class="dashboard-top-grid">
+  <div class="kpi-grid">
+    <app-kpi-card 
+      title="Total Produits" 
+      [value]="dashboardData.stats.totalProducts" 
+      iconClass="fa-boxes-stacked">
+    </app-kpi-card>
+    <app-kpi-card 
+      title="Entrées ce mois" 
+      [value]="dashboardData.stats.monthlyEntries" 
+      [change]="dashboardData.stats.changeInEntries" 
+      iconClass="fa-arrow-trend-up">
+    </app-kpi-card>
+    <app-kpi-card 
+      title="Sorties ce mois" 
+      [value]="dashboardData.stats.monthlyExits" 
+      [change]="dashboardData.stats.changeInExits" 
+      iconClass="fa-arrow-trend-down">
+    </app-kpi-card>
+    <app-kpi-card 
+      title="Alertes Actives" 
+      [value]="dashboardData.stats.activeAlerts" 
+      iconClass="fa-triangle-exclamation" 
+      [isAlert]="true">
+    </app-kpi-card>
+    <app-kpi-card 
+      title="Revenu du mois" 
+      [value]="dashboardData.stats.monthlyRevenue" 
+      [change]="dashboardData.stats.changeInRevenue"
+      [isCurrency]="true"  
+      iconClass="fa-solid fa-euro-sign">
+    </app-kpi-card>
+    <app-kpi-card 
+      title="Total Commandes" 
+      [value]="dashboardData.stats.totalOrders" 
+      iconClass="fa-solid fa-receipt">
+    </app-kpi-card>
+    <app-kpi-card 
+      title="Total Utilisateurs" 
+      [value]="dashboardData.stats.totalUsers" 
+      iconClass="fa-solid fa-users">
+    </app-kpi-card>
+  </div>
+  <div class="dashboard-alerts-list">
+    <app-alerts-list [alerts]="dashboardData.recentAlerts"></app-alerts-list>
+  </div>
+</section>
+
+  <!-- Section principale: Graphique et Alertes -->
+  <section class="main-grid">
+    <app-stock-chart [chartData]="stockMovementsChartData"></app-stock-chart>
+  </section>
+
+  <!-- Section du bas: Listes -->
+ <section class="bottom-grid">
+    <app-data-list 
+      title="Produits les Plus Actifs" 
+      [items]="topProductsForList" 
+      iconClass="fa-fire">
+    </app-data-list>
+
+    <!-- Ceci est la carte des fournisseurs principaux qui affichera nom et montant -->
+     <app-data-list 
+      title="Fournisseurs Principaux Par nombre de stock acheter" 
+      [items]="topSuppliersForList" 
+      iconClass="fa-truck-fast">
+    </app-data-list>
+  </section>
+
+</div>
+
+<!-- Indicateurs de chargement et d'erreur -->
+<div *ngIf="isLoading" class="loading-state">Chargement...</div>
+<div *ngIf="error" class="error-state">{{ error }}</div>

@@ -1,0 +1,237 @@
+<!-- src/app/pages/depot-list/depot-list.component.html -->
+
+<!-- C'est la div qui va contenir le gradient en haut de la page -->
+<div class="top-gradient-bar"></div>
+
+<div class="container">
+  <div class="header">
+    <h1>Gérez vos dépôts, entrepôts et centres de distribution</h1>
+    <button class="btn-primary" (click)="openNewDepotModal()">
+      <span>+</span>
+      Nouveau Dépôt
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue">📦</div>
+      <div class="stat-info">
+        <h3>Total Dépôts</h3>
+        <div class="value">{{ getTotalDepots() }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">📊</div>
+      <div class="stat-info">
+        <h3>Nombre Totale Responsable</h3>
+        <div class="value">{{ getResponsableTotal() | number:'1.0-0' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="depot-section">
+    <div class="section-header">
+      <span>📋</span>
+      <h2>Liste des Dépôts</h2>
+    </div>
+
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Rechercher par nom, ville ou responsable..." [(ngModel)]="searchQuery" (input)="onSearch()">
+    </div>
+
+    <div *ngIf="isLoading" class="loading-message">Chargement des dépôts...</div>
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <!-- colspan ajusté : (ID, Nom, Responsable, Adresse Principale, Actions) = 5 colonnes -->
+    <div *ngIf="!isLoading && !errorMessage && filteredDepots.length === 0" class="no-data-message">Aucun dépôt trouvé.</div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom du Dépôt</th>
+            <th>Responsable</th>
+            <th>Adresse Principale</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let depot of filteredDepots">
+            <td>
+              <div class="depot-id">DEP00{{ depot.id }}</div>
+            </td>
+            <td>
+              <div class="depot-name">{{ depot.nom }}</div>
+              <div class="depot-location">📍 {{ depot.ville }}</div>
+            </td>
+            <td>
+              <div class="responsible">
+                <span>👤</span> {{ depot.responsable?.nom }}
+              </div>
+            </td>
+            <td>
+              <div>{{ depot.adresse }}</div>
+              <div class="text-small">{{ depot.codePostal }} {{ depot.ville }} ({{ depot.zone }})</div>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="action-btn stats" (click)="openDetailsModal(depot)">📊</button>
+                <button class="action-btn edit" (click)="openEditModal(depot)">✏️</button>
+                <button class="action-btn delete" (click)="supprimerDepot(depot.id)">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modifier/Ajouter Dépôt Modal (inchangé) -->
+  <div class="modal-overlay" *ngIf="isEditModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ isNewDepotMode ? 'Ajouter un nouveau dépôt' : 'Modifier le dépôt' }}</h2>
+        <button class="close-modal-btn" (click)="closeModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="depotForm" (ngSubmit)="saveDepot()" class="depot-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nom">Nom du dépôt</label>
+              <input type="text" id="nom" formControlName="nom" />
+              <div *ngIf="depotForm.get('nom')?.invalid && depotForm.get('nom')?.touched" class="validation-error">
+                Nom est requis.
+              </div>
+            </div>
+            <div class="form-group full-width">
+              <label for="email">Email</label>
+              <input type="email" id="email" formControlName="email" />
+              <div *ngIf="depotForm.get('email')?.invalid && depotForm.get('email')?.touched" class="validation-error">
+                Email est requis et doit être valide.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="adresse">Adresse</label>
+            <input type="text" id="adresse" formControlName="adresse" />
+            <div *ngIf="depotForm.get('adresse')?.invalid && depotForm.get('adresse')?.touched" class="validation-error">
+              Adresse est requise.
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ville">Ville</label>
+              <input type="text" id="ville" formControlName="ville" />
+              <div *ngIf="depotForm.get('ville')?.invalid && depotForm.get('ville')?.touched" class="validation-error">
+                Ville est requise.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="codePostal">Code postal</label>
+              <input type="text" id="codePostal" formControlName="codePostal" />
+              <div *ngIf="depotForm.get('codePostal')?.invalid && depotForm.get('codePostal')?.touched" class="validation-error">
+                Code postal est requis (5 chiffres).
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="zone">Zone</label>
+              <input type="text" id="zone" formControlName="zone" />
+              <div *ngIf="depotForm.get('zone')?.invalid && depotForm.get('zone')?.touched" class="validation-error">
+                Zone est requise.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="responsableId">Responsable</label>
+              <select id="responsableId" formControlName="responsableId">
+                <option [value]="null" disabled>Sélectionner un responsable</option>
+                <option *ngFor="let resp of responsables" [value]="resp.id">{{ resp.nom }}</option>
+              </select>
+              <div *ngIf="isLoadingResponsables" class="loading-message-small">Chargement des responsables...</div>
+              <div *ngIf="responsablesErrorMessage" class="validation-error">{{ responsablesErrorMessage }}</div>
+              <div *ngIf="depotForm.get('responsableId')?.invalid && depotForm.get('responsableId')?.touched" class="validation-error">
+                Responsable est requis.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="telephone">Téléphone</label>
+              <input type="text" id="telephone" formControlName="telephone" />
+              <div *ngIf="depotForm.get('telephone')?.invalid && depotForm.get('telephone')?.touched" class="validation-error">
+                Téléphone est requis.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="tva">TVA (%)</label>
+              <input type="number" id="tva" formControlName="tva" />
+              <div *ngIf="depotForm.get('tva')?.invalid && depotForm.get('tva')?.touched" class="validation-error">
+                TVA est requise (min 0).
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message form-error-msg">{{ errorMessage }}</div>
+
+          <div class="modal-footer">
+            <button type="submit" class="submit-btn">
+              {{ isNewDepotMode ? 'Ajouter le dépôt' : 'Modifier le dépôt' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Détails Dépôt Modal (inchangé) -->
+  <div class="modal-overlay" *ngIf="isDetailsModalOpen && selectedDepot">
+    <div class="modal-content details-modal-content">
+      <div class="modal-header">
+        <h2>Détails du dépôt - {{ selectedDepot.nom }}</h2>
+        <button class="close-modal-btn" (click)="closeModals()">✕</button>
+      </div>
+      <div class="modal-body details-body">
+        <div class="summary-details-cards">
+        </div>
+
+        <div class="details-section">
+          <div class="info-group">
+            <h3>Informations Générales</h3>
+            <p><strong>Responsable:</strong> {{ selectedDepot.responsable?.nom }}</p>
+            <p><strong>Zone:</strong> {{ selectedDepot.zone }}</p>
+            <p><strong>TVA:</strong> {{ selectedDepot.tva }}%</p>
+          </div>
+          <div class="info-group contact-info">
+            <h3>Contact</h3>
+            <p><strong>Adresse:</strong> {{ selectedDepot.adresse }}</p>
+            <p>{{ selectedDepot.codePostal }} {{ selectedDepot.ville }}</p>
+            <p><strong>Téléphone:</strong> {{ selectedDepot.telephone }}</p>
+            <p><strong>Email:</strong> {{ selectedDepot.email }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOUVEAU: Modale de confirmation de suppression -->
+  <div class="modal-overlay" *ngIf="isConfirmDeleteModalOpen">
+    <div class="modal-content small-modal">
+      <div class="modal-header">
+        <h2>Confirmer la suppression</h2>
+        <button class="close-modal-btn" (click)="closeConfirmDeleteModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="confirmation-message">Êtes-vous sûr de vouloir supprimer ce dépôt ? Cette action est irréversible.</p>
+      </div>
+      <div class="modal-footer confirm-delete-footer">
+        <button class="btn-cancel" (click)="closeConfirmDeleteModal()">Annuler</button>
+        <button class="btn-delete-confirm" (click)="confirmDelete()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

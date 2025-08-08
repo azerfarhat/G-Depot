@@ -1,0 +1,149 @@
+/* === TOP GRID KPI + ALERTS === */
+.dashboard-top-grid {
+  display: grid;
+  grid-template-columns: 3fr 1.2fr;
+  gap: 32px;
+  margin-bottom: 36px;
+  align-items: start;
+}
+
+.dashboard-top-grid .kpi-grid {
+  margin-bottom: 0;
+}
+.dashboard-alerts-list {
+  min-width: 320px;
+  max-width: 420px;
+}
+@media (max-width: 1200px) {
+  .dashboard-top-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .dashboard-alerts-list {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+/* === AMÉLIORATION UI DASHBOARD === */
+.dashboard-container {
+  background: #f6f8fa;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px rgba(74,144,226,0.10);
+  padding: 36px 24px 48px 24px;
+  margin: 32px auto 0 auto;
+  max-width: 1600px;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, #4a90e2 60%, #357abd 100%);
+  color: #fff !important;
+  border-radius: 14px;
+  padding: 32px 40px 24px 40px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 12px rgba(74,144,226,0.10);
+  text-align: center;
+}
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: -1.5px;
+  color: #fff !important;
+}
+.dashboard-header p {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 400;
+  color: #fff !important;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  margin-bottom: 36px;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 36px;
+}
+
+@media (max-width: 1200px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .bottom-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 800px) {
+  .dashboard-container { padding: 12px 2vw; }
+  .dashboard-header { padding: 18px 8px; }
+  .kpi-grid, .main-grid, .bottom-grid { gap: 16px; }
+}
+@media (max-width: 600px) {
+  .dashboard-header h1 { font-size: 1.5rem; }
+  .dashboard-header p { font-size: 1rem; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .main-grid, .bottom-grid { grid-template-columns: 1fr; }
+}
+
+.loading-state, .error-state {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #357abd;
+  margin: 40px 0;
+  font-weight: 600;
+}
+/* Ce CSS définit la disposition des "boîtes" sur la page */
+.dashboard-container {
+  padding: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.dashboard-header {
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.dashboard-header p {
+  color: var(--text-secondary);
+  font-size: 1rem; /* 16px */
+  margin-top: 0.25rem;
+}
+.bottom-grid{
+  margin-top: 50px;
+}
+
+.kpi-grid, .main-grid, .bottom-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.kpi-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.main-grid { grid-template-columns: 2fr 1fr; }
+.bottom-grid { grid-template-columns: 1fr 1fr; }
+
+/* Styles pour les écrans plus petits */
+@media (max-width: 1024px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .bottom-grid { grid-template-columns: 1fr; }
+}
+/* On cible TOUS les enfants directs de nos grilles */
+.main-grid > *, .bottom-grid > * {
+  /* On applique l'astuce qui empêche le débordement horizontal */
+  min-width: 0;
+}

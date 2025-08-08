@@ -1,0 +1,261 @@
+.sidenav-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px; /* Slightly wider for better spacing */
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  overflow: auto;
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  border-right: 1px solid rgba(148, 163, 184, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 3rem;
+  text-align: center;
+  letter-spacing: -0.025em;
+  position: relative;
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.nav-item {
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: #cbd5e1;
+  gap: 1rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-item:hover::before {
+  left: 100%;
+}
+
+.nav-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #e2e8f0;
+  transform: translateX(4px);
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateX(2px);
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, #60a5fa, #3b82f6);
+  border-radius: 2px 0 0 2px;
+}
+
+.nav-item i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.nav-item:hover i {
+  transform: scale(1.1);
+}
+
+.nav-item.active i {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+.nav-item span {
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.logout-button {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.logout-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.logout-button:hover::before {
+  left: 100%;
+}
+
+.logout-button:hover {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+.logout-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* Scrollbar styling */
+.sidenav-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidenav-container::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: 3px;
+}
+
+.sidenav-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #64748b, #475569);
+  border-radius: 3px;
+}
+
+.sidenav-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #94a3b8, #64748b);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .sidenav-container {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidenav-container.mobile-open {
+    transform: translateX(0);
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .sidenav-container {
+    background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+    border-right-color: rgba(71, 85, 105, 0.2);
+  }
+}
+
+/* Animation for page load */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.sidenav-container {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+/* Micro-interactions for navigation items */
+.nav-item {
+  will-change: transform, background-color;
+}
+
+/* Focus states for accessibility */
+.nav-item:focus,
+.logout-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Enhanced active state with glow effect */
+.nav-item.active {
+  position: relative;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  z-index: -1;
+}

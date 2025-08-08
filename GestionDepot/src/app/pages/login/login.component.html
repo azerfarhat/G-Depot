@@ -1,0 +1,54 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1 class="login-title">Welcome back</h1>
+    <p class="login-subtitle">Welcome back! Please enter your details.</p>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-input"
+          placeholder="Enter your email"
+          [class.error]="email?.invalid && email?.touched"
+        />
+        <div *ngIf="email?.invalid && email?.touched" class="error-message">
+          <span *ngIf="email?.errors?.['required']">Email is required</span>
+          <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="motDePasse"
+          class="form-input"
+          placeholder="Enter your password"
+          [class.error]="motDePasse?.invalid && motDePasse?.touched" 
+        />
+        <div *ngIf="motDePasse?.invalid && motDePasse?.touched" class="error-message">
+          <span *ngIf="motDePasse?.errors?.['required']">Password is required</span>
+          <span *ngIf="motDePasse?.errors?.['minlength']">Password must be at least 6 characters</span>
+        </div>
+      </div>
+
+      <div class="forgot-password">
+        <button type="button" class="forgot-link" >
+          Forgot password
+        </button>
+      </div>
+
+        <div *ngIf="loginError" class="error-message global-error">
+        {{ loginError }}
+        </div>
+
+      <button type="submit" class="login-button">
+      Login
+      </button>
+    </form>
+  </div>
+</div>

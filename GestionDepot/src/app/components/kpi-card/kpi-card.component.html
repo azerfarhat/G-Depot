@@ -1,0 +1,17 @@
+<div class="card kpi-card">
+  <h3>{{ title }}</h3>
+<ng-container *ngIf="!isCurrency; else currencyValue">
+  <div class="value">{{ value | number:'1.0-0' }}</div>
+</ng-container>
+
+<ng-template #currencyValue>
+  <div class="value">{{ value | currency:'EUR':'symbol':'1.2-2' }}</div>
+  </ng-template>  <div *ngIf="change !== undefined" class="change" [ngClass]="change >= 0 ? 'positive' : 'negative'">
+    <i class="fas fa-sm" [ngClass]="change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+    <span>{{ change | number:'1.0-0' }}% par rapport au mois dernier</span>
+  </div>
+  
+  <div *ngIf="isAlert" class="change">
+    <span>Nécessite attention</span>
+  </div>
+</div>

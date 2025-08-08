@@ -1,0 +1,16 @@
+<div class="card list-card">
+  <h2><i class="fas fa-triangle-exclamation"></i> Alertes Récentes</h2>
+  <ul *ngIf="alerts && alerts.length > 0" class="alerts-list">
+    <li *ngFor="let alert of alerts" class="alert-item" [ngClass]="alert.type.toLowerCase()">
+      <strong>{{ alert.productName }}</strong>
+      <p>{{ alert.message }}</p>
+    </li>
+  </ul>
+
+  <div *ngIf="!alerts || alerts.length === 0" class="no-alerts-message">
+    <i class="fas fa-check-circle"></i>
+    <p>Aucune alerte active pour le moment.</p>
+    <span>Tout est sous contrôle !</span>
+  </div>
+
+</div>

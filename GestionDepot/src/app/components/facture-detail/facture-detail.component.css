@@ -1,0 +1,476 @@
+/* src/app/pages/facture-detail/facture-detail.component.css */
+
+/* === VARIABLES CSS === */
+:host {
+  --primary-color: #4a90e2;
+  --primary-dark: #357abd;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --white: #ffffff;
+  --border-color: #dee2e6;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* === RESET ET BASE === */
+* {
+  box-sizing: border-box;
+}
+
+/* === BARRE GRADIENT EN HAUT === */
+.top-gradient-bar {
+  height: 6px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark), #2c5282);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+/* === CONTENEUR PRINCIPAL === */
+.facture-detail-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* === BOUTON RETOUR === */
+.back-button {
+  background: linear-gradient(135deg, var(--secondary-color), #5a6268);
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #5a6268, #495057);
+}
+
+.back-button:before {
+  content: '←';
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* === TITRE PRINCIPAL === */
+.facture-detail-container h2 {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--white);
+  padding: 32px;
+  border-radius: var(--border-radius-lg);
+  margin: 0 0 32px 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: -0.02em;
+}
+
+.facture-detail-container h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+/* === INFORMATIONS FACTURE === */
+.facture-info {
+  background: var(--white);
+  padding: 32px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+  border: 1px solid rgba(0,0,0,0.05);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.facture-info p {
+  margin: 0;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--light-color), #f0f0f0);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  line-height: 1.6;
+  border-left: 4px solid var(--primary-color);
+  transition: var(--transition);
+}
+
+.facture-info p:hover {
+  transform: translateX(2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.facture-info strong {
+  color: var(--secondary-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* === STYLES SPÉCIFIQUES DES INFORMATIONS === */
+/* N° Facture */
+.facture-info p:nth-child(1) {
+  border-left-color: var(--primary-color);
+}
+
+.facture-info p:nth-child(1) strong + * {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+/* Client */
+.facture-info p:nth-child(2) {
+  border-left-color: var(--info-color);
+}
+
+/* Chauffeur */
+.facture-info p:nth-child(3) {
+  border-left-color: var(--warning-color);
+}
+
+/* Dates */
+.facture-info p:nth-child(4),
+.facture-info p:nth-child(5) {
+  border-left-color: var(--secondary-color);
+}
+
+/* Statut */
+.facture-info p:nth-child(6) {
+  border-left-color: var(--success-color);
+}
+
+/* Montants */
+.facture-info p:nth-child(7),
+.facture-info p:nth-child(8),
+.facture-info p:nth-child(9) {
+  border-left-color: var(--success-color);
+  font-weight: 600;
+}
+
+.facture-info p:nth-child(9) strong + * {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success-color);
+}
+
+/* Liens */
+.facture-info p:nth-child(10),
+.facture-info p:nth-child(11) {
+  border-left-color: var(--info-color);
+}
+
+/* === BADGES DE STATUT === */
+.status-badge {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.status-emise {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
+  color: #b8860b;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.status-payee {
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+  color: #155724;
+  border: 2px solid rgba(40, 167, 69, 0.3);
+}
+
+.status-annulee {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
+  color: #721c24;
+  border: 2px solid rgba(220, 53, 69, 0.3);
+}
+
+/* === LIENS === */
+.facture-info a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(74, 144, 226, 0.1);
+  transition: var(--transition);
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.facture-info a:hover {
+  background: rgba(74, 144, 226, 0.2);
+  transform: scale(1.05);
+}
+
+/* === SECTION ACTIONS === */
+.facture-actions {
+  background: var(--white);
+  padding: 32px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+  margin-bottom: 32px;
+}
+
+.facture-actions h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin: 0 0 24px 0;
+  padding: 0 0 12px 0;
+  border-bottom: 3px solid var(--primary-color);
+  position: relative;
+}
+
+.facture-actions h3::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--primary-dark);
+}
+
+/* === BOUTONS === */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color), #1e7e34);
+  color: var(--white);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #1e7e34, #155724);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger-color), #c82333);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c82333, #a71e2a);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning-color), #e0a800);
+  color: var(--dark-color);
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #e0a800, #d39e00);
+}
+
+/* === MESSAGE CHARGEMENT === */
+.facture-detail-container > p {
+  text-align: center;
+  padding: 60px;
+  color: var(--info-color);
+  font-style: italic;
+  font-size: 18px;
+  background: linear-gradient(135deg, #e3f2fd, #f0f8ff);
+  border-radius: var(--border-radius-lg);
+  margin: 32px 0;
+  border: 2px solid rgba(23, 162, 184, 0.2);
+  position: relative;
+}
+
+.facture-detail-container > p::before {
+  content: '⏳';
+  font-size: 24px;
+  display: block;
+  margin-bottom: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .facture-detail-container {
+    padding: 0 16px;
+  }
+  
+  .facture-detail-container h2 {
+    padding: 24px;
+    font-size: 20px;
+  }
+  
+  .facture-info {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  .facture-info p {
+    padding: 12px;
+  }
+  
+  .facture-actions {
+    padding: 20px;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-right: 0;
+    justify-content: center;
+  }
+  
+  .back-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .facture-info {
+    padding: 16px;
+  }
+  
+  .facture-info p {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .facture-actions {
+    padding: 16px;
+  }
+  
+  .btn {
+    font-size: 13px;
+    padding: 10px 20px;
+  }
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.facture-info {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.facture-actions {
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+/* === ÉTATS DE FOCUS === */
+.back-button:focus,
+.btn:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.facture-info a:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* === AMÉLIORATION VISUELLE === */
+.facture-info p:nth-child(9) {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+  border: 2px solid rgba(40, 167, 69, 0.2);
+  border-left: 4px solid var(--success-color);
+}
+
+@media (max-width: 768px) {
+  .facture-info p:nth-child(9) {
+    grid-column: span 1;
+  }
+}
+
+/* === ACCESSIBILITÉ === */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .btn::before {
+    display: none;
+  }
+}

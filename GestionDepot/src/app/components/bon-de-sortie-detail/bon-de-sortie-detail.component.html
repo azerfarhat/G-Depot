@@ -1,0 +1,95 @@
+<div class="bds-detail-container">
+  <!-- Bouton de retour à la liste -->
+  <button class="back-button" routerLink="/bons-de-sortie">Retour à la liste des Bons de Sortie</button>
+
+
+
+  <!-- Section principale des détails, affichée seulement si l'objet bonDeSortie est défini -->
+  @if (bonDeSortie) {
+    <h2>Détails du Bon de Sortie #{{ bonDeSortie.id }} ({{ bonDeSortie.numeroBDS }})</h2>
+    <div class="bds-info">
+      <p><strong>Chauffeur:</strong> {{ bonDeSortie.chauffeur?.nom || 'N/A' }}</p>
+      <p><strong>Date de Sortie:</strong> {{ bonDeSortie.dateSortie | date:'medium' }}</p>
+      <p><strong>Statut:</strong> {{ bonDeSortie.statut }}</p>
+      <p><strong>Commande d'Origine:</strong>
+        <!-- Affichage conditionnel du lien vers la commande si un ID de commande est présent -->
+        @if (bonDeSortie.commandeOrigineId) {
+          <a [routerLink]="['/commandes', bonDeSortie.commandeOrigineId]">{{ bonDeSortie.commandeOrigineId }}</a>
+        } @else {
+          N/A
+        }
+      </p>
+      <p><strong>Valeur Totale Initiale:</strong> {{ bonDeSortie.valeurTotaleInitialeTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+    </div>
+
+    <!-- Section des produits du Bon de Sortie -->
+    <h3>Produits du Bon de Sortie</h3>
+    @if (bonDeSortie.lignes && bonDeSortie.lignes.length > 0) {
+      <table class="lignes-bds-table">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Qté Sortie</th>
+            <th>Qté Retournée</th>
+            <th>Qté Facturée</th>
+            <th>Qté Dispo pour Facturation</th>
+            <th>Prix Unitaire TTC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Itération sur les lignes du bon de sortie -->
+          @for (ligne of bonDeSortie.lignes; track ligne.id) {
+            <tr>
+              <td>{{ ligne.nomProduit }} (ID: {{ ligne.produitId }})</td>
+              <td>{{ ligne.quantiteSortie }}</td>
+              <td>{{ ligne.quantiteRetournee }}</td>
+              <td>{{ ligne.quantiteFacturee }}</td>
+              <td><strong>{{ ligne.quantiteDisponiblePourFacturation }}</strong></td>
+              <td>{{ ligne.prixUnitaireTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p>Ce Bon de Sortie ne contient aucune ligne de produit.</p>
+    }
+
+    <!-- Section des factures liées au Bon de Sortie -->
+    <h3>Factures Liées</h3>
+    @if (bonDeSortie.factures && bonDeSortie.factures.length > 0) {
+      <div class="table-wrapper">
+        <table class="factures-liees-table">
+          <thead>
+            <tr>
+              <th>N° Facture</th>
+              <th>Date Facturation</th>
+              <th>Total TTC</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Itération sur les factures liées -->
+            @for (facture of bonDeSortie.factures; track facture.id) {
+              <tr>
+                <td>{{ facture.numeroFacture }}</td>
+                <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
+                <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                <td>{{ facture.statut }}</td>
+                <td>
+                  <!-- Bouton pour voir les détails d'une facture spécifique -->
+                  <a [routerLink]="['/factures', facture.id]" class="icon-button" title="Voir Facture">👁️</a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p>Aucune facture liée à ce Bon de Sortie pour l'instant.</p>
+    }
+
+  } @else {
+    <p>Chargement des détails du Bon de Sortie...</p>
+  }
+</div>

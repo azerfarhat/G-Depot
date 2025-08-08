@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bienvenue!</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="'Bonjour, ' + ${name} + '!'"></p>
+<p>Bienvenue sur notre application.</p>
+<p>Votre email est : <span th:text="${email}"></span></p>
+<p>Cordialement,<br />Azer Farhat</p>
+</body>
+</html>

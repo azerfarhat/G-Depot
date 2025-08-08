@@ -1,0 +1,324 @@
+<div class="inventory-container">
+  <!-- ===================================== -->
+  <!-- ===== HEADER DE LA PAGE ===== -->
+  <!-- ===================================== -->
+  <header class="main-header">
+    <h1>Gestion de l'Inventaire</h1>
+    <p>Gérez vos produits, stocks et niveaux d'alerte</p>
+  </header>
+
+  <!-- ============================================= -->
+  <!-- ===== MESSAGES DE LA PAGE PRINCIPALE ===== -->
+  <!-- ============================================= -->
+  <div *ngIf="pageSuccessMessage" class="page-message success-message">
+    {{ pageSuccessMessage }}
+  </div>
+  <div *ngIf="pageErrorMessage" class="page-message error-message">
+    {{ pageErrorMessage }}
+  </div>
+
+  <!-- ===================================== -->
+  <!-- ===== CARTE DE CONTENU PRINCIPAL ===== -->
+  <!-- ===================================== -->
+  <main class="content-card">
+    <div class="card-header">
+      <h2>Inventaire des Produits</h2>
+      <button class="btn btn-primary" (click)="openAddModal()">
+        + Ajouter un produit
+      </button>
+    </div>
+    <!-- ===== BARRE DE RECHERCHE ===== -->
+    <div class="search-bar-container">
+      <input 
+        type="text" 
+        placeholder="Rechercher par nom, ID, catégorie..."
+        [formControl]="searchControl"
+        class="search-input">
+      <i class="fa-solid fa-search search-icon"></i>
+    </div>
+    <!-- ===== TABLEAU DES PRODUITS ===== -->
+    <div class="table-wrapper">
+      @if (isLoading) {
+        <p class="loading-message">Chargement des données...</p>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Catégorie</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Lots</th>
+              <th>Prix HTVA</th>
+              <th>Prix TTC</th>
+              <th>Méthode</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of products; track product.id) {
+              <tr>
+                <td>{{ product.nom }}</td>
+                <td>{{ product.categorie || 'N/A' }}</td>
+                <td>
+                  <div class="stock-cell">
+                    <strong>{{ product.stockTotal }} u.</strong>
+                    <span>Min: {{ product.stockMinimum }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.status-ok]="product.stockTotal >= product.stockMinimum"
+                    [class.status-low]="product.stockTotal < product.stockMinimum">
+                    {{ product.stockTotal >= product.stockMinimum ? 'Stock OK' : 'Stock Faible' }}
+                  </span>
+                </td>
+                <td>{{ product.nombreLots }}</td>
+                <td>{{ product.dernierPrixVenteHTVA | currency:'EUR' }}</td>
+                <td><strong>{{ product.dernierPrixVenteTTC | currency:'EUR' }}</strong></td>
+                <td>{{ product.strategieStock }}</td>
+                <td class="actions-cell">
+                  <button title="Détails Stock" (click)="viewStockDetails(product)"><i class="fa-solid fa-box-archive"></i></button>
+                  <button title="Modifier Produit" (click)="editProduct(product)"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button title="Supprimer Produit" (click)="deleteProduct(product.id, product.nom)"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="no-data">Aucun produit trouvé.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- ===== MODALES (PLACÉES EN FIN DE FICHIER POUR LA CLARTÉ) ===== -->
+  <!-- ======================================================================= -->
+
+  <!-- ===== MODALE D'AJOUT DE PRODUIT ===== -->
+  @if (isAddModalOpen) {
+    <div class="modal-overlay" (click)="closeAddModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Ajouter un produit</h3>
+          <button class="close-btn" (click)="closeAddModal()">×</button>
+        </div>
+        <!-- Messages de la MODALE d'ajout -->
+        <div *ngIf="addModalMessage" class="modal-message" 
+             [class.success-message]="addModalMessage.includes('succès')"
+             [class.error-message]="addModalMessage.includes('Erreur') || addModalMessage.includes('Veuillez')">
+          {{ addModalMessage }}
+        </div>
+        <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()">
+          <div class="form-group"><label>Nom</label><input type="text" formControlName="nom" 
+            [class.is-invalid]="addForm.get('nom')?.invalid && addForm.get('nom')?.touched">
+            <div *ngIf="addForm.get('nom')?.invalid && addForm.get('nom')?.touched" class="validation-error">
+              <span *ngIf="addForm.get('nom')?.errors?.['required']">Le nom est obligatoire.</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea rows="3" formControlName="description"
+            [class.is-invalid]="addForm.get('description')?.invalid && addForm.get('description')?.touched"></textarea>
+            <div *ngIf="addForm.get('description')?.invalid && addForm.get('description')?.touched" class="validation-error">
+              <span *ngIf="addForm.get('description')?.errors?.['required']">La description est obligatoire.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="categorie">Catégorie</label>
+            <select class="form-control" id="categorie" formControlName="categorie">
+              <option value="">-- Sélectionner une catégorie --</option>
+              <option value="Électronique">Électronique</option>
+              <option value="Alimentaire">Alimentaire</option>
+              <option value="Textile">Textile</option>
+              <option value="Mobilier">Mobilier</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Stock d'alerte</label><input type="number" formControlName="stockMinimum"
+            [class.is-invalid]="addForm.get('stockMinimum')?.invalid && addForm.get('stockMinimum')?.touched">
+            <div *ngIf="addForm.get('stockMinimum')?.invalid && addForm.get('stockMinimum')?.touched" class="validation-error">
+              <span *ngIf="addForm.get('stockMinimum')?.errors?.['required']">Le stock minimum est obligatoire.</span>
+              <span *ngIf="addForm.get('stockMinimum')?.errors?.['min']">Doit être supérieur ou égal à 0.</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Méthode de sortie</label><select formControlName="strategieStock"
+            [class.is-invalid]="addForm.get('strategieStock')?.invalid && addForm.get('strategieStock')?.touched">@for(opt of strategieStockOptions;track opt){<option [value]="opt">{{opt}}</option>}</select>
+            <div *ngIf="addForm.get('strategieStock')?.invalid && addForm.get('strategieStock')?.touched" class="validation-error">
+              <span *ngIf="addForm.get('strategieStock')?.errors?.['required']">La méthode de sortie est obligatoire.</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeAddModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="addForm.invalid">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ===== MODALE D'ÉDITION DE PRODUIT ===== -->
+  @if (isEditModalOpen && currentEditingProduct) {
+    <div class="modal-overlay" (click)="closeEditModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Modifier "{{ currentEditingProduct.nom }}"</h3>
+          <button class="close-btn" (click)="closeEditModal()">×</button>
+        </div>
+        <!-- Messages de la MODALE d'édition -->
+        <div *ngIf="editModalMessage" class="modal-message" 
+             [class.success-message]="editModalMessage.includes('succès')"
+             [class.error-message]="editModalMessage.includes('Erreur') || editModalMessage.includes('Veuillez')">
+          {{ editModalMessage }}
+        </div>
+        <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+          <div class="form-group"><label>Nom</label><input type="text" formControlName="nom"
+            [class.is-invalid]="editForm.get('nom')?.invalid && editForm.get('nom')?.touched">
+            <div *ngIf="editForm.get('nom')?.invalid && editForm.get('nom')?.touched" class="validation-error">
+              <span *ngIf="editForm.get('nom')?.errors?.['required']">Le nom est obligatoire.</span>
+              <span *ngIf="editForm.get('nom')?.errors?.['minlength']">Minimum 2 caractères.</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea rows="3" formControlName="description"
+            [class.is-invalid]="editForm.get('description')?.invalid && editForm.get('description')?.touched"></textarea>
+            <div *ngIf="editForm.get('description')?.invalid && editForm.get('description')?.touched" class="validation-error">
+              <span *ngIf="editForm.get('description')?.errors?.['required']">La description est obligatoire.</span>
+              <span *ngIf="editForm.get('description')?.errors?.['minlength']">Minimum 10 caractères.</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Méthode de sortie</label><select formControlName="strategieStock"
+            [class.is-invalid]="editForm.get('strategieStock')?.invalid && editForm.get('strategieStock')?.touched">
+            @for(opt of strategieStockOptions;track opt){
+              <option [value]="opt">{{opt}}</option>
+            }
+          </select>
+            <div *ngIf="editForm.get('strategieStock')?.invalid && editForm.get('strategieStock')?.touched" class="validation-error">
+              <span *ngIf="editForm.get('strategieStock')?.errors?.['required']">La méthode de sortie est obligatoire.</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Annuler</button>
+            <!-- Bouton désactivé si formulaire invalide OU s'il n'a pas été modifié (editForm.dirty) -->
+            <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid || !editForm.dirty">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ===== MODALE DE DÉTAILS ET AJOUT DE STOCK ===== -->
+  @if (isStockModalOpen && currentProductForStock) {
+    <div class="modal-overlay" (click)="closeStockModal()">
+      <div class="modal-content stock-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Stock pour "{{ currentProductForStock.nom }}"</h3>
+          <button class="close-btn" (click)="closeStockModal()">×</button>
+        </div>
+        <!-- Messages de la MODALE de stock -->
+        <div *ngIf="stockModalMessage" class="modal-message" 
+             [class.success-message]="stockModalMessage.includes('succès') || stockModalMessage.includes('ajouté')"
+             [class.error-message]="stockModalMessage.includes('Erreur') || stockModalMessage.includes('Veuillez') || stockModalMessage.includes('annulée')">
+          {{ stockModalMessage }}
+        </div>
+        <div class="stock-details-list">
+          @if(isLoadingStock){<p class="loading-message">Chargement...</p>}
+          @else if(stockDetails.length === 0){<p class="no-data">Aucun lot en stock.</p>}
+          @else{
+            <table>
+              <thead><tr><th>Code-barres</th><th>Qté</th><th>Prix Vente</th><th>Entrée</th><th>Péremption</th></tr></thead>
+              <tbody>@for(lot of stockDetails;track lot.id){
+                <tr>
+                  <td>{{lot.codeBarre}}</td>
+                  <td>{{lot.quantiteProduit}}</td>
+                  <td>{{lot.prixVenteTTC|currency:'EUR'}}</td>
+                  <td>{{lot.createdAt|date:'dd/MM/yy'}}</td>
+                  <td>{{lot.dateExpiration|date:'dd/MM/yy'}}</td>
+                </tr>
+              }
+              </tbody>
+            </table>
+          }
+        </div>
+        <div class="add-stock-section">
+          @if(!isAddingStock){
+            <button class="btn btn-secondary" (click)="isAddingStock = true">+ Ajouter une entrée</button>
+          } @else {
+            <h4>Nouvelle entrée en stock</h4>
+            <form [formGroup]="addStockForm" (ngSubmit)="onAddStockSubmit()">
+              <div class="form-row"><div class="form-group"><label>Code-barres</label><input type="text" formControlName="codeBarre"
+                [class.is-invalid]="addStockForm.get('codeBarre')?.invalid && addStockForm.get('codeBarre')?.touched">
+                <div *ngIf="addStockForm.get('codeBarre')?.invalid && addStockForm.get('codeBarre')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('codeBarre')?.errors?.['required']">Le code-barres est obligatoire.</span>
+                </div>
+              </div><div class="form-group"><label>Quantité</label><input type="number" formControlName="quantite"
+                [class.is-invalid]="addStockForm.get('quantite')?.invalid && addStockForm.get('quantite')?.touched">
+                <div *ngIf="addStockForm.get('quantite')?.invalid && addStockForm.get('quantite')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('quantite')?.errors?.['required']">La quantité est obligatoire.</span>
+                  <span *ngIf="addStockForm.get('quantite')?.errors?.['min']">Doit être au moins 1.</span>
+                </div>
+              </div></div>
+              <div class="form-row"><div class="form-group"><label>Prix Achat HTVA</label><input type="number" step="0.01" formControlName="prixAchat"
+                [class.is-invalid]="addStockForm.get('prixAchat')?.invalid && addStockForm.get('prixAchat')?.touched">
+                <div *ngIf="addStockForm.get('prixAchat')?.invalid && addStockForm.get('prixAchat')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('prixAchat')?.errors?.['required']">Le prix d'achat est obligatoire.</span>
+                  <span *ngIf="addStockForm.get('prixAchat')?.errors?.['min']">Doit être positif.</span>
+                </div>
+              </div><div class="form-group"><label>Prix Vente HTVA</label><input type="number" step="0.01" formControlName="prixVenteHTVA"
+                [class.is-invalid]="addStockForm.get('prixVenteHTVA')?.invalid && addStockForm.get('prixVenteHTVA')?.touched">
+                <div *ngIf="addStockForm.get('prixVenteHTVA')?.invalid && addStockForm.get('prixVenteHTVA')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('prixVenteHTVA')?.errors?.['required']">Le prix de vente est obligatoire.</span>
+                  <span *ngIf="addStockForm.get('prixVenteHTVA')?.errors?.['min']">Doit être positif.</span>
+                </div>
+              </div></div>
+              <div class="form-row"><div class="form-group"><label>Seuil d'alerte</label><input type="number" formControlName="seuilMin"
+                [class.is-invalid]="addStockForm.get('seuilMin')?.invalid && addStockForm.get('seuilMin')?.touched">
+                <div *ngIf="addStockForm.get('seuilMin')?.invalid && addStockForm.get('seuilMin')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('seuilMin')?.errors?.['required']">Le seuil est obligatoire.</span>
+                  <span *ngIf="addStockForm.get('seuilMin')?.errors?.['min']">Doit être positif ou nul.</span>
+                </div>
+              </div><div class="form-group"><label>Péremption</label><input type="date" formControlName="dateExpiration"
+                [class.is-invalid]="addStockForm.get('dateExpiration')?.invalid && addStockForm.get('dateExpiration')?.touched">
+                <div *ngIf="addStockForm.get('dateExpiration')?.invalid && addStockForm.get('dateExpiration')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('dateExpiration')?.errors?.['required']">La date de péremption est obligatoire.</span>
+                </div>
+              </div></div>
+              <div class="form-row"><div class="form-group"><label>Dépôt</label><select formControlName="depotId"
+                [class.is-invalid]="addStockForm.get('depotId')?.invalid && addStockForm.get('depotId')?.touched"><option [ngValue]="null" disabled>Choisir...</option>@for(d of depots;track d.id){<option [value]="d.id">{{d.nom}}</option>}</select>
+                <div *ngIf="addStockForm.get('depotId')?.invalid && addStockForm.get('depotId')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('depotId')?.errors?.['required']">Le dépôt est obligatoire.</span>
+                </div>
+              </div><div class="form-group"><label>Fournisseur</label><select formControlName="fournisseurid"
+                [class.is-invalid]="addStockForm.get('fournisseurid')?.invalid && addStockForm.get('fournisseurid')?.touched"><option [ngValue]="null" disabled>Choisir...</option>@for(f of fournisseurs;track f.id){<option [value]="f.id">{{f.nom}}</option>}</select>
+                <div *ngIf="addStockForm.get('fournisseurid')?.invalid && addStockForm.get('fournisseurid')?.touched" class="validation-error">
+                  <span *ngIf="addStockForm.get('fournisseurid')?.errors?.['required']">Le fournisseur est obligatoire.</span>
+                </div>
+              </div></div>
+              <div class="form-actions"><button type="button" class="btn btn-secondary" (click)="isAddingStock=false">Annuler</button><button type="submit" class="btn btn-primary" [disabled]="addStockForm.invalid">Ajouter</button></div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ======================================================= -->
+  <!-- NOUVEAU : MODALE DE CONFIRMATION PERSONNALISÉE ===== -->
+  <!-- ======================================================= -->
+  <div *ngIf="isConfirmModalOpen" class="modal-overlay">
+    <div class="modal-content confirmation-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Confirmation</h3>
+        <button class="close-btn" (click)="confirmAction(false)">×</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ confirmMessage }}</p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="confirmAction(false)">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="confirmAction(true)">Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>

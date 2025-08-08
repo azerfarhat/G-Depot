@@ -1,0 +1,12 @@
+<!-- On s'abonne à l'observable 'isLoggedIn$' avec le pipe async -->
+<!-- Si l'utilisateur est connecté (isLoggedIn$ est true), on affiche le layout principal -->
+<div *ngIf="isLoggedIn$ | async" class="app-layout">
+  <app-sidebar></app-sidebar>
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<!-- Si l'utilisateur n'est PAS connecté (isLoggedIn$ est false), on affiche seulement le router-outlet -->
+<!-- La page de login s'affichera ici, sans le layout autour -->
+<router-outlet *ngIf="!(isLoggedIn$ | async)"></router-outlet>

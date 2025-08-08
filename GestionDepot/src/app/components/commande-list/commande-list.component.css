@@ -1,0 +1,437 @@
+/* src/app/pages/commande-list/commande-list.component.css */
+
+/* === VARIABLES CSS === */
+:host {
+  --primary-color: #4a90e2;
+  --primary-dark: #357abd;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --white: #ffffff;
+  --border-color: #dee2e6;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* === RESET ET BASE === */
+* {
+  box-sizing: border-box;
+}
+
+/* === BARRE GRADIENT EN HAUT === */
+.top-gradient-bar {
+  height: 6px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark), #2c5282);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+/* === CONTENEUR PRINCIPAL === */
+.commande-list-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* === TITRE PRINCIPAL === */
+.commande-list-container h2 {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--white);
+  padding: 32px;
+  border-radius: var(--border-radius-lg);
+  margin: 0 0 32px 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: -0.02em;
+}
+
+.commande-list-container h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+/* === SECTION ACTIONS === */
+.actions {
+  background: var(--white);
+  padding: 24px 32px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.actions input[type="number"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  transition: var(--transition);
+  background: var(--white);
+}
+
+.actions input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.actions input[type="number"]::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.actions button {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.actions select {
+  flex: 1;
+  min-width: 180px;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  transition: var(--transition);
+  background: var(--white);
+  cursor: pointer;
+}
+
+.actions select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* === TABLEAU DES COMMANDES === */
+.commandes-table {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.commandes-table thead {
+  background: linear-gradient(135deg, var(--light-color), #f0f0f0);
+}
+
+.commandes-table th {
+  padding: 20px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--secondary-color);
+  border-bottom: 2px solid var(--border-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.commandes-table td {
+  padding: 20px 16px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+}
+
+.commandes-table tbody tr:hover {
+  background: linear-gradient(135deg, #fafafa, #f8f9fa);
+}
+
+.commandes-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* === STYLES SPÉCIFIQUES DES CELLULES === */
+.commandes-table td:first-child {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 12px;
+}
+
+.commandes-table td:first-child::before {
+  content: '#';
+  opacity: 0.7;
+}
+
+.commandes-table td:nth-child(2) {
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.commandes-table td:nth-child(3) {
+  color: var(--secondary-color);
+  font-size: 13px;
+}
+
+.commandes-table td:nth-child(4) {
+  font-weight: 600;
+}
+
+.commandes-table td:nth-child(5) {
+  font-weight: 700;
+  color: var(--success-color);
+  font-size: 15px;
+}
+
+/* === BADGES DE STATUT === */
+.commandes-table td:nth-child(4) {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Styles conditionnels pour les statuts (à appliquer via des classes) */
+.statut-en-cours {
+  color: var(--warning-color);
+  background: rgba(255, 193, 7, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.statut-validee {
+  color: var(--success-color);
+  background: rgba(40, 167, 69, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.statut-annulee {
+  color: var(--danger-color);
+  background: rgba(220, 53, 69, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.statut-livree {
+  color: var(--info-color);
+  background: rgba(23, 162, 184, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+/* === ACTIONS DU TABLEAU === */
+.commandes-table td:last-child {
+  white-space: nowrap;
+}
+
+.commandes-table td:last-child button {
+  margin-right: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Bouton Détails */
+.commandes-table td:last-child button:first-child {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1976d2;
+}
+
+.commandes-table td:last-child button:first-child:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Bouton Valider */
+.commandes-table td:last-child button:nth-child(2) {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  color: #388e3c;
+}
+
+.commandes-table td:last-child button:nth-child(2):hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Bouton Annuler */
+.commandes-table td:last-child button:last-child {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  color: #d32f2f;
+}
+
+.commandes-table td:last-child button:last-child:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* === MESSAGE VIDE === */
+.commandes-table tbody tr td[colspan="6"] {
+  text-align: center;
+  padding: 40px;
+  color: var(--secondary-color);
+  font-style: italic;
+  font-size: 16px;
+  background: linear-gradient(135deg, #fafafa, #f0f0f0);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .commande-list-container {
+    padding: 0 16px;
+  }
+  
+  .commande-list-container h2 {
+    padding: 24px;
+    font-size: 20px;
+  }
+  
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  }
+  
+  .actions input[type="number"],
+  .actions select {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .actions button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .commandes-table {
+    font-size: 12px;
+  }
+  
+  .commandes-table th,
+  .commandes-table td {
+    padding: 12px 8px;
+  }
+  
+  .commandes-table td:last-child button {
+    margin-right: 4px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .commandes-table th,
+  .commandes-table td {
+    padding: 8px 4px;
+  }
+  
+  .commandes-table td:last-child {
+    white-space: normal;
+  }
+  
+  .commandes-table td:last-child button {
+    display: block;
+    width: 100%;
+    margin: 2px 0;
+  }
+  
+  .actions {
+    gap: 12px;
+  }
+}
+
+/* === SCROLLING HORIZONTAL POUR PETITS ÉCRANS === */
+@media (max-width: 640px) {
+  .commandes-table {
+    min-width: 640px;
+  }
+  
+  .commande-list-container {
+    overflow-x: auto;
+  }
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.commandes-table tbody tr {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* === LOADING STATE === */
+.loading-overlay {
+  position: relative;
+}
+
+.loading-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+}
+
+/* === FOCUS STATES === */
+.actions input:focus,
+.actions select:focus,
+.actions button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.commandes-table td button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}

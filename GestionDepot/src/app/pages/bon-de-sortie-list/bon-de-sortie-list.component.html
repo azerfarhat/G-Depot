@@ -1,0 +1,224 @@
+<div class="inventory-container">
+  <div class="card-header">
+    <h2>Liste des Bons de Sortie</h2>
+    <button class="btn btn-primary" (click)="openCreateBonDeSortieForm()">+ Nouveau Bon de Sortie</button>
+  </div>
+
+  <!-- Formulaire de création de Bon de Sortie -->
+  <div *ngIf="showCreateForm" class="create-form">
+    <h3>Créer un nouveau Bon de Sortie</h3>
+    <div class="form-group">
+      <label for="commandeId">Commande à utiliser :</label>
+      <select id="commandeId" [(ngModel)]="nouvelleCommandeId" (ngModelChange)="onCommandeChange()">
+        <option [ngValue]="undefined">-- Sélectionner une commande validée --</option>
+        <option *ngFor="let cmd of commandesValidees" [ngValue]="cmd.id">
+          {{ cmd.id }} - {{ cmd.client?.nom || 'Client inconnu' }} (TTC: {{ cmd.totaleCommandeTTC | currency:'EUR':'symbol':'1.2-2' }})
+        </option>
+      </select>
+    </div>
+    <div class="form-group" *ngIf="nouveauChauffeurId">
+      <label>Chauffeur associé :</label>
+      <span>
+        {{ getNomChauffeurAssocie() }}
+      </span>
+    </div>
+    <button class="btn btn-success" (click)="creerNouveauBonDeSortie()">Créer</button>
+    <button type="button" class="btn btn-secondary" (click)="showCreateForm = false">Annuler</button>
+  </div>
+
+  <div class="content-card">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>N° Bon</th>
+            <th>Chauffeur</th>
+            <th>Total TTC Initial</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bds of bonsDeSortie$ | async; track bds.id) {
+            <tr>
+              <td>{{ bds.numeroBDS }}</td>
+              <td>{{ bds.chauffeurNom || 'N/A' }}</td>
+              <td>{{ bds.valeurTotaleInitialeTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>
+                <span class="status-badge" 
+                      [class.status-cree]="bds.statut === StatutBonDeSortie.CREE"
+                      [class.status-en-cours]="bds.statut === StatutBonDeSortie.EN_COURS"
+                      [class.status-livre]="bds.statut === StatutBonDeSortie.LIVRE"
+                      [class.status-partiellement-livre]="bds.statut === StatutBonDeSortie.PARTIELLEMENT_LIVRE"
+                      [class.status-retourne]="bds.statut === StatutBonDeSortie.RETOURNE"
+                      [class.status-facture]="bds.statut === StatutBonDeSortie.FACTURE"
+                      [class.status-partiellement-facture]="bds.statut === StatutBonDeSortie.PARTIELLEMENT_FACTURE"
+                      [class.status-annule]="bds.statut === StatutBonDeSortie.ANNULE">
+                  {{ bds.statut }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button (click)="openDetailsModal(bds)" title="Voir détails et factures">👁️</button>
+                <button (click)="openRetourModal(bds)" title="Gérer les retours">↩️</button>
+                <button (click)="openFacturationModal(bds)" title="Créer une facture pour ce BDS">🧾</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="no-data">Aucun bon de sortie trouvé.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modale de Détails du Bon de Sortie -->
+<div class="modal-overlay" *ngIf="selectedBdsForDetails" (click)="closeDetailsModal()">
+  <div class="modal-content bds-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Détails du Bon de Sortie #{{ selectedBdsForDetails.id }} ({{ selectedBdsForDetails.numeroBDS }})</h3>
+      <button class="close-btn" (click)="closeDetailsModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <h4>Informations Générales</h4>
+      <p><strong>Chauffeur:</strong> {{ selectedBdsForDetails.chauffeur?.nom || 'N/A' }}</p>
+      <p><strong>Date de Sortie:</strong> {{ selectedBdsForDetails.dateSortie | date:'mediumDate' }}</p>
+      <p><strong>Statut:</strong> {{ selectedBdsForDetails.statut }}</p>
+      <p><strong>Commande d'Origine:</strong>
+        @if (selectedBdsForDetails.commandeOrigineId) {
+          <a [routerLink]="['/commandes', selectedBdsForDetails.commandeOrigineId]">{{ selectedBdsForDetails.commandeOrigineId }}</a>
+        } @else {
+          N/A
+        }
+      </p>
+      <p><strong>Valeur Initiale:</strong> {{ selectedBdsForDetails.valeurTotaleInitialeTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+
+      <h4>Lignes du Bon de Sortie</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+              <tr>
+                  <th>Produit</th>
+                  <th>Qté Sortie</th>
+                  <th>Qté Retournée</th>
+                  <th>Qté Facturée</th>
+                  <th>Qté Dispo Fact.</th>
+                  <th>Prix Unitaire TTC</th>
+              </tr>
+          </thead>
+          <tbody>
+              @for (ligne of selectedBdsForDetails.lignes; track ligne.id) {
+                  <tr>
+                      <td>{{ ligne.nomProduit }}</td>
+                      <td>{{ ligne.quantiteSortie }}</td>
+                      <td>{{ ligne.quantiteRetournee }}</td>
+                      <td>{{ ligne.quantiteFacturee }}</td>
+                      <td><strong>{{ ligne.quantiteDisponiblePourFacturation }}</strong></td>
+                      <td>{{ ligne.prixUnitaireTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                  </tr>
+              } @empty {
+                  <tr><td colspan="6">Aucune ligne de produit.</td></tr>
+              }
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Factures Liées</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+              <tr><th>N° Facture</th><th>Montant TTC</th><th>Date Fact.</th><th>Statut</th></tr>
+          </thead>
+          <tbody>
+              @for (facture of selectedBdsForDetails.factures; track facture.id) {
+                  <tr>
+                      <td>{{ facture.numeroFacture }}</td>
+                      <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                      <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
+                      <td>{{ facture.statut }}</td>
+                  </tr>
+              } @empty {
+                  <tr><td colspan="4">Aucune facture liée.</td></tr>
+              }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modale des Retours -->
+<div class="modal-overlay" *ngIf="selectedBdsForReturn" (click)="closeRetourModal()">
+  <div class="modal-content bds-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+        <h3>Enregistrer les Retours - {{ selectedBdsForReturn.numeroBDS }}</h3>
+        <button class="close-btn" (click)="closeRetourModal()">×</button>
+    </div>
+    <div class="modal-body">
+        <h4>Produits à Retourner</h4>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Qté Sortie</th>
+                    <th>Qté Déjà Retournée</th>
+                    <th>Qté Dispo Retour</th>
+                    <th>Qté à Retourner</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (ligne of selectedBdsForReturn.lignes; track ligne.id) {
+                    <tr>
+                        <td>{{ ligne.nomProduit }}</td>
+                        <td>{{ ligne.quantiteSortie }}</td>
+                        <td>{{ ligne.quantiteRetournee }}</td>
+                        <td>{{ ligne.quantiteSortie - ligne.quantiteRetournee }}</td>
+                        <td class="form-group">
+                          <input 
+                            type="number" 
+                            [value]="quantitesRetourneesMap.get(ligne.id)" 
+                            (input)="onQuantiteRetourneeChange(ligne.id, $event)" 
+                            min="0" 
+                            [max]="ligne.quantiteSortie - ligne.quantiteRetournee"
+                            [disabled]="(ligne.quantiteSortie - ligne.quantiteRetournee) <= 0"
+                          >
+                        </td>
+                    </tr>
+                } @empty {
+                    <tr><td colspan="5">Aucune ligne de produit pour ce Bon de Sortie.</td></tr>
+                }
+            </tbody>
+          </table>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeRetourModal()">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="enregistrerRetours()">Enregistrer les Retours</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modale de Création de Facture par Chauffeur -->
+<div class="modal-overlay" *ngIf="selectedBdsForFacturation" (click)="closeFacturationModal()">
+  <div class="modal-content bds-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Créer Facture pour Bon de Sortie #{{ selectedBdsForFacturation.id }}</h3>
+      <button class="close-btn" (click)="closeFacturationModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <h4>Ajouter une ligne à la facture</h4>
+      <div class="form-group">
+        <label for="produitFactureId">ID Produit:</label>
+        <input type="number" id="produitFactureId" [(ngModel)]="factureChauffeurProduitId" placeholder="ID Produit" />
+      </div>
+      <div class="form-group">
+        <label for="quantiteFacture">Quantité à facturer:</label>
+        <input type="number" id="quantiteFacture" [(ngModel)]="factureChauffeurQuantite" placeholder="Quantité" />
+      </div>
+      <button class="btn btn-primary" (click)="creerFactureChauffeur()">Créer Facture</button>
+    </div>
+  </div>
+</div>

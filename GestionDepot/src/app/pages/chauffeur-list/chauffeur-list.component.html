@@ -1,0 +1,147 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Liste des Chauffeurs</h1>
+    <button class="action-button" (click)="openAddModal()">+ Nouveau Chauffeur</button>
+  </div>
+  
+  @if (notificationMessage) {
+    <div class="notification-banner" [class.success]="notificationType === 'success'" [class.error]="notificationType === 'error'">
+      {{ notificationMessage }}
+      <button class="close-notification-btn" (click)="clearNotification()">×</button>
+    </div>
+  }
+
+  @if (isLoading) { <div class="loading-indicator">Chargement...</div> }
+  @else if (errorMessage) { <div class="error-message">{{ errorMessage }}</div> }
+  @else {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Chauffeur</th>
+            <th>Téléphone</th>
+            <th>Permis</th>
+            <th>Véhicule</th>
+            <th>Actions</th> 
+          </tr>
+        </thead>
+        <tbody>
+          @for (chauffeur of chauffeurs; track chauffeur.id) {
+            <tr>
+              <td><strong>{{ chauffeur.nom }}</strong><br><small>{{ chauffeur.email }}</small></td>
+              <td>{{ chauffeur.telephone || 'N/A' }}</td>
+              <td>{{ chauffeur.permis || 'N/A' }}</td>
+              <td>{{ chauffeur.vehiculeInfo || 'Non assigné' }}</td>
+              <td class="actions-cell">
+                <a [routerLink]="['/chauffeurs', chauffeur.id]" class="icon-button" title="Voir Dashboard">👁️</a>
+                <button class="icon-button" title="Modifier" (click)="openEditModal(chauffeur)">✏️</button>
+                <button class="icon-button" title="Voir Factures" (click)="openFacturesChauffeurModal(chauffeur.id, chauffeur.nom)">🧾</button> <!-- NOUVEAU BOUTON -->
+                <button class="icon-button" title="Supprimer" (click)="deleteChauffeur(chauffeur.id, chauffeur.nom)">🗑️</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="text-center">Aucun chauffeur trouvé.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Modale Unique pour Ajouter et Modifier -->
+  @if (isModalOpen) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingChauffeurId ? 'Modifier le chauffeur' : 'Ajouter un chauffeur' }}</h2>
+          <button class="close-button" (click)="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="chauffeurForm" (ngSubmit)="onSubmit()">
+            
+            <h3>Informations Personnelles</h3>
+            <div class="form-grid">
+              <div class="form-group"><label for="nom">Nom Complet</label><input type="text" id="nom" formControlName="nom"></div>
+              <div class="form-group"><label for="email">Email</label><input type="email" id="email" formControlName="email"></div>
+              <div class="form-group"><label for="motDePasse">Mot de Passe <small *ngIf="editingChauffeurId">(laisser vide pour ne pas changer)</small></label><input type="password" id="motDePasse" formControlName="motDePasse"></div>
+              <div class="form-group"><label for="telephone">Téléphone</label><input type="text" id="telephone" formControlName="telephone"></div>
+            </div>
+
+            <h3 class="section-title">Informations Professionnelles</h3>
+            <div class="form-grid">
+              <div class="form-group"><label for="numeroPermis">Numéro de Permis</label><input type="text" id="numeroPermis" formControlName="numeroPermis"></div>
+              <div class="form-group"><label for="matriculeVehicule">Matricule Véhicule</label><input type="text" id="matriculeVehicule" formControlName="matriculeVehicule"></div>
+              <div class="form-group"><label for="marqueVehicule">Marque Véhicule</label><input type="text" id="marqueVehicule" formControlName="marqueVehicule"></div>
+              <div class="form-group"><label for="modeleVehicule">Modèle Véhicule</label><input type="text" id="modeleVehicule" formControlName="modeleVehicule"></div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="closeModal()">Annuler</button>
+              <button type="submit" class="btn-primary" [disabled]="isSubmitting || chauffeurForm.invalid">
+                {{ isSubmitting ? 'Enregistrement...' : (editingChauffeurId ? 'Mettre à jour' : 'Enregistrer') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modale de Confirmation de Suppression -->
+  @if (isConfirmModalOpen) {
+    <div class="modal-overlay">
+      <div class="modal-content confirmation-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Confirmation</h3>
+          <button class="close-btn" (click)="confirmAction(false)">×</button>
+        </div>
+        <div class="modal-body">
+          <p>{{ confirmMessage }}</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel-confirm" (click)="confirmAction(false)">Annuler</button>
+          <button type="button" class="btn-primary-confirm" (click)="confirmAction(true)">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- NOUVELLE MODALE : Liste des Factures d'un Chauffeur -->
+  @if (showFacturesChauffeurModal) {
+    <div class="modal-overlay" (click)="closeFacturesChauffeurModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Factures de {{ selectedChauffeurNom }}</h3>
+          <button class="close-btn" (click)="closeFacturesChauffeurModal()">×</button>
+        </div>
+        <div class="modal-body">
+          @if (chauffeurFactures.length > 0) {
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>N° Facture</th>
+                    <th>Date Fact.</th>
+                    <th>Total TTC</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (facture of chauffeurFactures; track facture.id) {
+                    <tr>
+                      <td>{{ facture.numeroFacture }}</td>
+                      <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
+                      <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                      <td>{{ facture.statut }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <p class="text-center">Aucune facture trouvée pour ce chauffeur.</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

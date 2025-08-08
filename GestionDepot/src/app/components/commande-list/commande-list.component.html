@@ -1,0 +1,57 @@
+<div class="commande-list-container">
+  <h2>Gestion des Commandes</h2>
+
+  <div class="actions">
+    <select [(ngModel)]="nouveauChauffeurId" name="nouveauChauffeurId" required>
+      <option [ngValue]="null">Sélectionner un chauffeur...</option>
+      <option *ngFor="let chauffeur of chauffeurs" [ngValue]="chauffeur.id">
+        {{ chauffeur.nom }} ({{ chauffeur.email }})
+      </option>
+    </select>
+    <button (click)="creerNouvelleCommande()">Créer Commande Vide</button>
+
+    <select [(ngModel)]="filtreStatut" (change)="loadCommandes()">
+      <option value="">Tous les statuts</option>
+      @for (statut of statuts; track statut) {
+        <option [value]="statut">{{ statut }}</option>
+      }
+    </select>
+  </div>
+
+  <table class="commandes-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Chauffeur</th>
+        <th>Date Commande</th>
+        <th>Statut</th>
+        <th>Total TTC</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (commande of commandes; track commande.id) { <!-- Nouvelle syntaxe @for avec trackBy -->
+        <tr>
+          <td>{{ commande.id }}</td>
+          <td>{{ commande.client?.nom || 'N/A' }}</td> <!-- Opérateur de chaînage optionnel pour client -->
+          <td>{{ commande.dateCommande | date:'medium' }}</td>
+          <td>{{ commande.statutCommande }}</td>
+          <td>{{ commande.totaleCommandeTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+          <td>
+            <button (click)="viewDetails(commande.id)">Détails</button>
+            @if (commande.statutCommande === 'EN_COURS') { <!-- Nouvelle syntaxe @if -->
+              <button (click)="validerCommande(commande.id)">Valider</button>
+            }
+            @if (commande.statutCommande !== 'ANNULEE') { <!-- Nouvelle syntaxe @if -->
+              <button (click)="annulerCommande(commande.id)">Annuler</button>
+            }
+          </td>
+        </tr>
+      } @empty { <!-- Nouvelle syntaxe @empty pour le cas où la liste est vide -->
+        <tr>
+          <td colspan="6">Aucune commande trouvée avec ce filtre.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

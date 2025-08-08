@@ -1,0 +1,75 @@
+<div class="inventory-container" *ngIf="dashboardData$ | async as data">
+    <div class="main-header" style="display: flex; align-items: center; gap: 1rem;">
+        <a routerLink="/chauffeurs" class="btn btn-secondary">← Retour</a>
+        <h1>{{ data.chauffeur.nom }}</h1>
+    </div>
+
+    <!-- Cartes de Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h5>Marchandises Prises</h5>
+        <h3>{{ data.stats.totalPrix | currency:'EUR' }}</h3>
+        <span>Total des sorties</span>
+      </div>
+      <div class="stat-card stat-success">
+        <h5>Marchandises Vendues</h5>
+        <h3>{{ data.stats.totalVendu | currency:'EUR' }}</h3>
+        <span>Chiffre d'affaires</span>
+      </div>
+      <div class="stat-card stat-warning">
+        <h5>Marchandises Retournées</h5>
+        <h3>{{ data.stats.totalRetourne | currency:'EUR' }}</h3>
+        <span>Invendus</span>
+      </div>
+      <div class="stat-card stat-primary">
+        <h5>Marge Bénéficiaire</h5>
+        <!-- CORRECTION : margeTotale -> margeBeneficiaire -->
+        <h3>{{ data.stats.margeBeneficiaire | currency:'EUR' }}</h3>
+        <span>Profit total</span>
+      </div>
+    </div>
+    
+    <!-- Taux de Vente -->
+     <!--supprimer la section de taux de vente depuis frontEnd seuelemnt-->
+    <!--
+    <div class="content-card" style="margin-top: 2rem;">
+        <h5>Taux de Vente</h5>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" [style.width.%]="data.stats.tauxDeVente">
+                <span>{{ data.stats.tauxDeVente | number:'1.1-1' }}%</span>
+            </div>
+        </div>
+    </div>
+    
+    -->
+    
+    
+    <!-- Onglets et tableau -->
+    <div class="tabs-container">
+        <div class="tab active">Bons de Sortie</div>
+        <div class="tab">Factures</div>
+        <div class="tab">Performance</div>
+    </div>
+    
+    <div class="content-card tab-content">
+        <h2>Historique des Bons de Sortie</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+                <tr><th>N° Bon</th><th>Date</th><th>Total TTC</th><th>Vendu</th><th>Retourné</th><th>Marge</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let bds of data.historiqueBons">
+                    <td>{{ bds.numeroBDS }}</td>
+                    <td>{{ bds.dateSortie | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ bds.valeurInitiale | currency:'EUR' }}</td>
+                    <td class="text-success">{{ bds.valeurVendue | currency:'EUR' }}</td>
+                    <td class="text-warning">{{ bds.valeurRetournee | currency:'EUR' }}</td>
+                    <td [class.text-danger]="bds.marge < 0">{{ bds.marge | currency:'EUR' }}</td>
+                    <td><span class="status-badge" [class.status-ok]="bds.statut === 'Livré'">{{ bds.statut }}</span></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+    </div>
+</div>

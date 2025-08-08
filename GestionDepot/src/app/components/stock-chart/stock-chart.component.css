@@ -1,0 +1,20 @@
+/* === MODERN STOCK CHART === */
+.chart-container {
+  background: linear-gradient(135deg, #f8fbff 80%, #eaf4fd 100%);
+  border: 1.5px solid #bcdffb;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(74,144,226,0.08);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  min-height: 350px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.chart-container {
+  display: flex;
+  background-color: var(--card-bg);
+  position: relative;
+  height: 350px; /* Hauteur de la carte du graphique */
+  width: 100%;
+}

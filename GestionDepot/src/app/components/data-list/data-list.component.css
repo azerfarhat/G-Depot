@@ -1,0 +1,41 @@
+/* === MODERN DATA LIST === */
+.list-card {
+  background: linear-gradient(135deg, #f8fbff 80%, #eaf4fd 100%);
+  border: 1.5px solid #bcdffb;
+  border-radius: 16px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(74,144,226,0.08);
+}
+h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #357abd;
+  margin: 0 0 1.2rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1.5px solid #bcdffb;
+}
+.data-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eaf4fd;
+}
+.data-item:last-child { border: none; padding-bottom: 0; }
+.data-item .value {
+  font-weight: 700;
+  color: #357abd;
+  font-size: 1.1rem;
+}
+/* data-list.component.css */
+.list-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1.5rem; }
+h2 { font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin: 0 0 0.0 0; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+.data-list { list-style: none; padding: 0; margin: 0; }
+.data-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
+.data-item:last-child { border: none; padding-bottom: 0; }
+.data-item .value { font-weight: 600; color: var(--text-secondary); }

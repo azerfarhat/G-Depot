@@ -1,0 +1,164 @@
+<!-- src/app/fournisseur-list/fournisseur-list.component.html -->
+<!-- READY TO COPY PASTE -->
+
+<div class="page-container">
+  <div class="header">
+    <div class="header-text">
+      <h1>Gestion des Fournisseurs</h1>
+      <p>Gérez vos partenaires et fournisseurs</p>
+    </div>
+    <button class="btn-add" (click)="addFournisseur()">
+      + Ajouter un fournisseur
+    </button>
+  </div>
+
+  <div class="summary-cards">
+    <div class="card">
+      <span class="card-title">Total Fournisseurs</span>
+      <span class="card-value">{{ totalFournisseurs }}</span>
+    </div>
+    <div class="card">
+      <span class="card-title">Total Stocks Global</span>
+      <span class="card-value">{{ totalStocksGlobal }}</span>
+    </div>
+    <div class="card">
+      <span class="card-title">Valeur Totale des Commandes</span>
+      <span class="card-value">€{{ totalValeurGlobal | number:'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <div class="list-section">
+    <h2>Liste des Fournisseurs</h2>
+    <div class="search-bar">
+      <i class="fa-solid fa-search search-icon"></i>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un fournisseur..." />
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Fournisseur</th>
+            <th>Contact</th>
+            <th>Coordonnées</th>
+            <th>Quantité</th>
+            <th>Valeur</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fournisseur of filteredFournisseurs">
+            <td>{{ fournisseur.nom }}</td>
+            <td>{{ fournisseur.societe }}</td>
+            <td>
+              <p><i class="email-icon">📧</i> {{ fournisseur.email }}</p>
+              <p><i class="phone-icon">📞</i> {{ fournisseur.telephone }}</p>
+            </td>
+            <td>{{ fournisseur.totalStocksQuantity }} Unité</td>
+            <td>€{{ fournisseur.totalCommandeValue | number:'1.2-2' }}</td>
+            <td class="actions-cell">
+              <button class="btn-action edit-icon" (click)="editFournisseur(fournisseur.id!)" title="Modifier">✏️</button>
+              <button class="btn-action delete-icon" (click)="confirmDeleteFournisseur(fournisseur.id!, fournisseur.nom)" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredFournisseurs.length === 0">
+            <td colspan="6" class="no-data">Aucun fournisseur trouvé.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Fournisseur Modal -->
+<div class="modal-backdrop" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>{{ modalTitle }}</h2>
+      <button class="close-button" (click)="closeModal()">✖</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="fournisseurForm" (ngSubmit)="saveFournisseur()">
+        <div class="form-group">
+          <label for="nom">Nom du Fournisseur:</label>
+          <input type="text" id="nom" formControlName="nom" [class.is-invalid]="fournisseurForm.get('nom')?.invalid && fournisseurForm.get('nom')?.touched">
+          <div *ngIf="fournisseurForm.get('nom')?.invalid && fournisseurForm.get('nom')?.touched" class="error-message">
+            Le nom est requis.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="societe">Société:</label>
+          <input type="text" id="societe" formControlName="societe" [class.is-invalid]="fournisseurForm.get('societe')?.invalid && fournisseurForm.get('societe')?.touched">
+          <div *ngIf="fournisseurForm.get('societe')?.invalid && fournisseurForm.get('societe')?.touched" class="error-message">
+            La société est requise.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" formControlName="email" [class.is-invalid]="fournisseurForm.get('email')?.invalid && fournisseurForm.get('email')?.touched">
+          <div *ngIf="fournisseurForm.get('email')?.invalid && fournisseurForm.get('email')?.touched" class="error-message">
+            <span *ngIf="fournisseurForm.get('email')?.errors?.['required']">L'email est requis.</span>
+            <span *ngIf="fournisseurForm.get('email')?.errors?.['email']">Format d'email invalide.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="telephone">Téléphone:</label>
+          <input type="text" id="telephone" formControlName="telephone" [class.is-invalid]="fournisseurForm.get('telephone')?.invalid && fournisseurForm.get('telephone')?.touched">
+          <div *ngIf="fournisseurForm.get('telephone')?.invalid && fournisseurForm.get('telephone')?.touched" class="error-message">
+            <!-- **** MODIFICATION HERE: Removed the pattern error message line **** -->
+            <span *ngIf="fournisseurForm.get('telephone')?.errors?.['required']">Le téléphone est requis.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="adresse">Adresse:</label>
+          <input type="text" id="adresse" formControlName="adresse" [class.is-invalid]="fournisseurForm.get('adresse')?.invalid && fournisseurForm.get('adresse')?.touched">
+          <div *ngIf="fournisseurForm.get('adresse')?.invalid && fournisseurForm.get('adresse')?.touched" class="error-message">
+            L'adresse est requise.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pays">Pays:</label>
+          <input type="text" id="pays" formControlName="pays" [class.is-invalid]="fournisseurForm.get('pays')?.invalid && fournisseurForm.get('pays')?.touched">
+          <div *ngIf="fournisseurForm.get('pays')?.invalid && fournisseurForm.get('pays')?.touched" class="error-message">
+            Le pays est requis.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="siteWeb">Site Web:</label>
+          <input type="text" id="siteWeb" formControlName="siteWeb" [class.is-invalid]="fournisseurForm.get('siteWeb')?.invalid && fournisseurForm.get('siteWeb')?.touched">
+          <div *ngIf="fournisseurForm.get('siteWeb')?.invalid && fournisseurForm.get('siteWeb')?.touched" class="error-message">
+            <span *ngIf="fournisseurForm.get('siteWeb')?.errors?.['pattern']">Format de site web invalide (ex: http://www.example.com).</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn-primary" [disabled]="fournisseurForm.invalid">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="isConfirmModalOpen">
+  <div class="modal-content small-modal">
+    <div class="modal-header">
+      <h2>Confirmer la suppression</h2>
+      <button class="close-button" (click)="cancelDelete()">✖</button>
+    </div>
+    <div class="modal-body">
+      <p>Êtes-vous sûr de vouloir supprimer le fournisseur <strong>"{{ fournisseurToDeleteName }}"</strong> ?</p>
+      <p class="warning-text">Cette action est irréversible.</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" (click)="cancelDelete()">Annuler</button>
+      <button type="button" class="btn-danger" (click)="deleteConfirmed()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="notification-toast" [ngClass]="{'show': notificationVisible, 'success': notification.type === 'success', 'error': notification.type === 'error'}">
+  <span class="notification-message">{{ notification.message }}</span>
+  <button class="close-notification" (click)="closeNotification()">✖</button>
+</div>
