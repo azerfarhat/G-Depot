@@ -102,6 +102,12 @@ export const routes: Routes = [
   // La route pour les factures par chauffeur/commande/bds sera gérée via des requêtes API
   // et des modales/navigations depuis FactureListComponent ou CommandeDetail/BonDeSortieDetail
 
+  // Route vers la carte de la Tunisie
+  {
+    path: 'map',
+    loadComponent: () => import('./components/tunisia-map/tunisia-map.component').then(m => m.TunisiaMapComponent),
+    canActivate: [authGuard]
+  },
   // Route joker (doit être la dernière)
   { path: '**', redirectTo: 'dashboard' } // Si une route n'est pas trouvée, redirige vers le dashboard
 ];

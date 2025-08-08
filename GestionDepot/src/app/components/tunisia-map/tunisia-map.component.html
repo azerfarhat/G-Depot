@@ -1,0 +1,22 @@
+<div id="map" style="height: 400px; width: 100%;"></div>
+
+<div *ngIf="showForm" class="form-container">
+	<h4>Saisir la localisation</h4>
+	<div><b>Latitude:</b> {{lat}}<br><b>Longitude:</b> {{lng}}</div>
+			<label for="clientId" *ngIf="locationType === 'Client'">Client :</label>
+			<select id="clientId" *ngIf="locationType === 'Client'" [(ngModel)]="clientId">
+				<option value="" disabled selected>Choisir un client...</option>
+				<option *ngFor="let c of clients" [value]="c.id">{{c.nom}}</option>
+			</select>
+			<label for="depotId" *ngIf="locationType === 'Dépôt'">Dépôt :</label>
+			<select id="depotId" *ngIf="locationType === 'Dépôt'" [(ngModel)]="depotId">
+				<option value="" disabled selected>Choisir un dépôt...</option>
+				<option *ngFor="let d of depots" [value]="d.id">{{d.nom}}</option>
+			</select>
+	<label for="type">Type de localisation :</label>
+	<select id="type" [(ngModel)]="locationType">
+		<option value="" disabled selected>Choisir...</option>
+		<option *ngFor="let t of locationTypes" [value]="t">{{t}}</option>
+	</select>
+			<button (click)="saveLocation()" [disabled]="!locationType || (locationType === 'Client' && !clientId) || (locationType === 'Dépôt' && !depotId)">Enregistrer</button>
+</div>

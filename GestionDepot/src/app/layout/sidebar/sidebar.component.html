@@ -10,37 +10,22 @@
       <i class="fa-solid fa-box-archive"></i>
       <span>Inventaire</span>
     </a>
-    <a routerLink="/movements" routerLinkActive="active" class="nav-item">
-      <i class="fa-solid fa-arrow-trend-up"></i>
-      <span>Mouvements</span>
-    </a>
     <a routerLink="/commandes" routerLinkActive="active" class="nav-item">
       <i class="fa-solid fa-cart-shopping"></i>
       <span>Commandes</span>
-    </a>
-    
-    <!-- CORRECTION : Le lien vers les factures doit pointer vers '/factures' -->
+    </a>  
     <a routerLink="/factures" routerLinkActive="active" class="nav-item">
       <i class="fa-solid fa-file-invoice"></i>
       <span>Factures</span>
     </a>
-    
-    <!-- Ligne de l'ancien lien "entreprises" qui était un commentaire -->
-    <!-- <a routerLink="/entreprises" routerLinkActive="active" class="nav-item">
-      <i class="fa-solid fa-building"></i>
-      <span>Entreprises</span>
-    </a> -->
-    
     <a routerLink="/chauffeurs" routerLinkActive="active" class="nav-item">
        <i class="fa-solid fa-truck"></i>
       <span>Chauffeurs</span>
     </a>
-
     <a routerLink="/bons-de-sortie" routerLinkActive="active" class="nav-item">
       <i class="fa-solid fa-file-export"></i>
       <span>Bons de Sortie</span>
     </a>
-
     <a routerLink="/fournisseurs" routerLinkActive="active" class="nav-item">
       <i class="fa-solid fa-truck-fast"></i>
       <span>Fournisseurs</span>
@@ -53,15 +38,10 @@
       <i class="fa-solid fa-users"></i>
       <span>Utilisateurs</span>
     </a>
-    <a routerLink="/alerts" routerLinkActive="active" class="nav-item">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      <span>Alertes</span>
-    </a>
-    <a routerLink="/settings" routerLinkActive="active" class="nav-item">
-      <i class="fa-solid fa-gear"></i>
-      <span>Paramètres</span>
+    <a routerLink="/map" routerLinkActive="active" class="nav-item">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Map</span>
     </a>
   </nav>
-
   <button (click)="logout()" class="logout-button">Déconnexion</button>
 </aside>

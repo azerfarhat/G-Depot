@@ -3,7 +3,7 @@ import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/comm
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { UtilisateurService } from '../../services/utilisateur.service'; // <-- CORRECTION : On utilise UtilisateurService
+import { UtilisateurService } from '../../services/utilisateur.service';
 import { ChauffeurDashboardData } from '../../models/chauffeur-dashboard.model';
 
 @Component({
@@ -15,21 +15,24 @@ import { ChauffeurDashboardData } from '../../models/chauffeur-dashboard.model';
 })
 export class ChauffeurDashboardComponent implements OnInit {
 
+
   dashboardData$!: Observable<ChauffeurDashboardData>;
   chauffeurId!: number;
 
+
   constructor(
     private route: ActivatedRoute,
-    private utilisateurService: UtilisateurService // <-- CORRECTION : On injecte UtilisateurService
+    private utilisateurService: UtilisateurService,
   ) { }
 
   ngOnInit(): void {
     this.dashboardData$ = this.route.paramMap.pipe(
       switchMap(params => {
         this.chauffeurId = +params.get('id')!;
-        // On appelle la méthode depuis le bon service
         return this.utilisateurService.getDashboardData(this.chauffeurId);
       })
     );
   }
+
+
 }
