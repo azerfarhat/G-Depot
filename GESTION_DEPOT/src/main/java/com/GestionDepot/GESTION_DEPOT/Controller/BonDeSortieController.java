@@ -37,6 +37,15 @@ public class BonDeSortieController {
         return new ResponseEntity<>(nouveauBDS, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}/produits")
+    public ResponseEntity<List<ProduitDTO>> getProduitsParBonDeSortie(@PathVariable Long id) {
+        try {
+            List<ProduitDTO> produits = bonDeSortieService.getProduitsDTOParBonDeSortie(id);
+            return ResponseEntity.ok(produits);
+        } catch (EntityNotFoundException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
     // Endpoint pour récupérer tous les Bons de Sortie
     @GetMapping
     public ResponseEntity<List<BonDeSortieListDTO>> getAllBonsDeSortie() {
