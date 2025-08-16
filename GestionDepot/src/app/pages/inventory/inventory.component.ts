@@ -302,7 +302,7 @@ export class InventoryComponent implements OnInit {
     const oldPrice = this.currentProductForStock.dernierPrixVenteHTVA;
     
     if (oldPrice != null && newPrice !== oldPrice) {
-      this.openConfirmModal(`Le prix de vente a changé (Ancien: ${oldPrice}€, Nouveau: ${newPrice}€).\nVoulez-vous définir ce nouveau prix comme prix par défaut ?`).subscribe(confirmed => {
+      this.openConfirmModal(`Le prix de vente a changé (Ancien: ${oldPrice}TND, Nouveau: ${newPrice}TND).\nVoulez-vous définir ce nouveau prix comme prix par défaut ?`).subscribe(confirmed => {
         if (confirmed) {
           this.updateProductPriceAndAddStock(newStockData);
         } else {
@@ -406,7 +406,20 @@ export class InventoryComponent implements OnInit {
    * Rafraîchit la liste des produits en relançant la recherche avec le terme actuel.
    */
   private refreshSearch(): void {
-    this.searchControl.setValue(this.searchControl.value);
+    // Recharge tous les produits sans filtre pour garantir le rafraîchissement après ajout
+    this.isLoading = true;
+    this.productService.getProductsForList('').subscribe({
+      next: (data: ProduitList[]) => {
+        this.products = data;
+        this.isLoading = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.products = [];
+        this.pageErrorMessage = err.message || 'Erreur lors du chargement des produits.';
+        this.scheduleMessageClear(5000);
+      }
+    });
   }
 
   // =========================================================

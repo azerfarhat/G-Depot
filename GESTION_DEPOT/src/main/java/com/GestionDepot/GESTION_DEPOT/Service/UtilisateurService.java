@@ -2,6 +2,7 @@ package com.GestionDepot.GESTION_DEPOT.Service;
 
 import com.GestionDepot.GESTION_DEPOT.Model.*;
 import com.GestionDepot.GESTION_DEPOT.Repository.BonDeSortieRepository;
+import com.GestionDepot.GESTION_DEPOT.Repository.DepotRepository;
 import com.GestionDepot.GESTION_DEPOT.Repository.UtilisateurRepository;
 import com.GestionDepot.GESTION_DEPOT.Request.UtilisateurDto;
 import com.GestionDepot.GESTION_DEPOT.Response.UtilisateurSimpleDto;
@@ -9,6 +10,7 @@ import com.GestionDepot.GESTION_DEPOT.Response.VehiculeDto;
 import com.GestionDepot.GESTION_DEPOT.dto.ChauffeurDashboardDTO;
 import com.GestionDepot.GESTION_DEPOT.enums.RoleUtilisateur;
 import com.GestionDepot.GESTION_DEPOT.dto.ChauffeurListDto;
+import com.GestionDepot.GESTION_DEPOT.Dto.DepotDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class UtilisateurService {
 
     private final UtilisateurRepository utilisateurRepository;
+    private final DepotRepository depotRepository;
     private final EmailService emailService;
     private final BonDeSortieRepository bonDeSortieRepository; // Nouvelle dépendance
 
@@ -39,11 +42,18 @@ public class UtilisateurService {
             throw new IllegalStateException("L'adresse email '" + dto.getEmail() + "' est déjà utilisée.");
         }
 
+
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setNom(dto.getNom());
         utilisateur.setEmail(dto.getEmail());
         utilisateur.setMotDePasse(dto.getMotDePasse());
         utilisateur.setRole(dto.getRole());
+
+        Depot depotAssigne = depotRepository.findById(dto.getDepotId())
+                .orElseThrow(() -> new EntityNotFoundException("Dépôt non trouvé avec l'ID : " + dto.getDepotId()));
+        utilisateur.setDepot(depotAssigne);
+
+
 
         if (dto.getRole() == RoleUtilisateur.CHAUFFEUR) {
             // Si le rôle est CHAUFFEUR, alors on vérifie les champs spécifiques.
@@ -117,6 +127,15 @@ public class UtilisateurService {
         dto.setTelephone(utilisateur.getTelephone()); // <-- AJOUTÉ
         dto.setNumeroPermis(utilisateur.getNumeroPermis()); // <-- AJOUTÉ
         dto.setRole(utilisateur.getRole()); // <-- AJOUTÉ
+
+        if (utilisateur.getDepot() != null) {
+            Depot depot = utilisateur.getDepot();
+            DepotDto depotDto = new DepotDto();
+            depotDto.setId(depot.getId());
+            depotDto.setNom(depot.getNom());
+            // add other fields if you want (e.g., ville)
+            dto.setDepot(depotDto);
+        }
 
         // Mapper les informations du véhicule si l'utilisateur a un véhicule
         if (utilisateur.getVehicule() != null) { // <-- AJOUTÉ

@@ -15,6 +15,8 @@ public class UtilisateurDto {
     @NotBlank(message = "L'email est obligatoire")
     @Email(message = "Le format de l'email est invalide")
     private String email;
+    @NotNull(message = "L'ID du dépôt est obligatoire")
+    private Long depotId;
 
     private String motDePasse;
 

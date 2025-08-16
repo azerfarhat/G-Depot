@@ -89,13 +89,11 @@ public class FactureService {
             Produit produit = produitRepository.findById(ligneDto.getProduitId())
                     .orElseThrow(() -> new EntityNotFoundException("Produit non trouvé avec l'id : " + ligneDto.getProduitId()));
 
-            // TROUVER LA LIGNE BON DE SORTIE CORRESPONDANTE
             LigneBonDeSortie ligneBds = bds.getLignes().stream()
                     .filter(lbds -> lbds.getProduit().getId().equals(produit.getId()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Le produit " + produit.getNom() + " n'existe pas dans le Bon de Sortie " + bds.getNumeroBDS()));
 
-            // VÉRIFIER ET DÉDUIRE LA QUANTITÉ DU BON DE SORTIE
             int quantiteDemandee = ligneDto.getQuantite();
             if (quantiteDemandee <= 0) {
                 throw new IllegalArgumentException("La quantité à facturer pour le produit " + produit.getNom() + " doit être positive.");

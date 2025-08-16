@@ -7,6 +7,8 @@ import { UtilisateurService } from '../../services/utilisateur.service';
 import { FactureService } from '../../services/facture.service'; // <--- NOUVEL IMPORT
 import { ChauffeurListDto } from '../../models/chauffeur.model';
 import { UtilisateurRequestDto } from '../../models/utilisateur-request.model';
+import { DepotDto } from '../../models/depot.model';
+import { DepotService } from '../../services/depot.service';
 import { Facture } from '../../models/facture/facture.model'; // Pour le type de la réponse
 
 
@@ -18,6 +20,7 @@ import { Facture } from '../../models/facture/facture.model'; // Pour le type de
   styleUrls: ['./chauffeur-list.component.css']
 })
 export class ChauffeurListComponent implements OnInit {
+  depots: DepotDto[] = [];
   private utilisateurService = inject(UtilisateurService);
   private factureService = inject(FactureService); // <--- INJECTION DU SERVICE FACTURE
   private fb = inject(FormBuilder);
@@ -42,9 +45,19 @@ export class ChauffeurListComponent implements OnInit {
   chauffeurFactures: Facture[] = [];
   selectedChauffeurNom: string | null = null;
 
+  private depotService = inject(DepotService);
+
   ngOnInit(): void {
     this.loadChauffeurs();
     this.initChauffeurForm();
+    this.loadDepots();
+  }
+
+  loadDepots(): void {
+    this.depotService.getAllDepots().subscribe({
+      next: (data: DepotDto[]) => this.depots = data,
+      error: (err: any) => console.error('Erreur lors du chargement des dépôts:', err)
+    });
   }
 
   loadChauffeurs(): void {
@@ -62,6 +75,7 @@ export class ChauffeurListComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       motDePasse: ['', [Validators.minLength(6)]],
       role: ['CHAUFFEUR', Validators.required],
+      depotId: [null, Validators.required],
       telephone: [''],
       numeroPermis: ['', Validators.required],
       marqueVehicule: ['', Validators.required],
@@ -79,23 +93,25 @@ export class ChauffeurListComponent implements OnInit {
   }
 
   openEditModal(chauffeur: ChauffeurListDto): void {
-    this.editingChauffeurId = chauffeur.id;
-    this.chauffeurForm.get('motDePasse')?.clearValidators();
-    this.chauffeurForm.get('motDePasse')?.updateValueAndValidity();
-    this.chauffeurForm.get('motDePasse')?.reset();
-    
-    this.utilisateurService.getUtilisateurById(chauffeur.id).subscribe(data => {
-        this.chauffeurForm.patchValue({
-            nom: data.nom,
-            email: data.email,
-            telephone: data.telephone,
-            numeroPermis: data.numeroPermis,
-            marqueVehicule: data.vehicule?.marque,
-            modeleVehicule: data.vehicule?.modele,
-            matriculeVehicule: data.vehicule?.matricule
-        });
-        this.isModalOpen = true;
+  this.editingChauffeurId = chauffeur.id;
+  this.chauffeurForm.get('motDePasse')?.clearValidators();
+  this.chauffeurForm.get('motDePasse')?.updateValueAndValidity();
+  this.chauffeurForm.get('motDePasse')?.reset();
+  this.utilisateurService.getUtilisateurById(chauffeur.id).subscribe(data => {
+    this.chauffeurForm.patchValue({
+      nom: data.nom,
+      email: data.email,
+      telephone: data.telephone,
+      numeroPermis: data.numeroPermis,
+      marqueVehicule: data.vehicule?.marque,
+      modeleVehicule: data.vehicule?.modele,
+      matriculeVehicule: data.vehicule?.matricule
     });
+    // Reset form state so it is pristine after patchValue
+    this.chauffeurForm.markAsPristine();
+    this.chauffeurForm.markAsUntouched();
+    this.isModalOpen = true;
+  });
   }
 
   closeModal(): void {

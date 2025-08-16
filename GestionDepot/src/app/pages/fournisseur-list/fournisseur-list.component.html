@@ -23,7 +23,7 @@
     </div>
     <div class="card">
       <span class="card-title">Valeur Totale des Commandes</span>
-      <span class="card-value">€{{ totalValeurGlobal | number:'1.2-2' }}</span>
+      <span class="card-value">TND{{ totalValeurGlobal | number:'1.2-2' }}</span>
     </div>
   </div>
 
@@ -55,7 +55,7 @@
               <p><i class="phone-icon">📞</i> {{ fournisseur.telephone }}</p>
             </td>
             <td>{{ fournisseur.totalStocksQuantity }} Unité</td>
-            <td>€{{ fournisseur.totalCommandeValue | number:'1.2-2' }}</td>
+            <td>TND{{ fournisseur.totalCommandeValue | number:'1.2-2' }}</td>
             <td class="actions-cell">
               <button class="btn-action edit-icon" (click)="editFournisseur(fournisseur.id!)" title="Modifier">✏️</button>
               <button class="btn-action delete-icon" (click)="confirmDeleteFournisseur(fournisseur.id!, fournisseur.nom)" title="Supprimer">🗑️</button>

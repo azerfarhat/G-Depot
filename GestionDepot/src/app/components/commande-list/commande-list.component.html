@@ -36,7 +36,7 @@
           <td>{{ commande.client?.nom || 'N/A' }}</td> <!-- Opérateur de chaînage optionnel pour client -->
           <td>{{ commande.dateCommande | date:'medium' }}</td>
           <td>{{ commande.statutCommande }}</td>
-          <td>{{ commande.totaleCommandeTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+          <td>{{ commande.totaleCommandeTTC | currency:'TND':'symbol':'1.2-2' }}</td>
           <td>
             <button (click)="viewDetails(commande.id)">Détails</button>
             @if (commande.statutCommande === 'EN_COURS') { <!-- Nouvelle syntaxe @if -->

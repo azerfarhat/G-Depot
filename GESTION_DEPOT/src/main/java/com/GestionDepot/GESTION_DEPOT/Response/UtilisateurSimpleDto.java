@@ -1,6 +1,7 @@
 package com.GestionDepot.GESTION_DEPOT.Response;
 
 import com.GestionDepot.GESTION_DEPOT.enums.RoleUtilisateur;
+import com.GestionDepot.GESTION_DEPOT.Dto.DepotDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,6 @@ public class UtilisateurSimpleDto {
     private String numeroPermis;
     private VehiculeDto vehicule; // Utilisera le nouveau VehiculeDto
     private RoleUtilisateur role; // Utile pour la logique frontend si nécessaire
+    private DepotDto depot; // <-- ADD THIS LINE
+
 }

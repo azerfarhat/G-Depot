@@ -60,6 +60,7 @@
             <th>Nom</th>
             <th>Email</th>
             <th>Rôle</th>
+            <th>Dépôt</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -70,6 +71,9 @@
             <td>
               <span [ngClass]="getRoleBadgeClass(user.role)">{{ getDisplayRole(user.role) }}</span>
             </td>
+            <td>
+              {{ user.depot?.nom || 'N/A' }}
+            </td>
             <td class="action-buttons">
               <!-- Call openEditModal with the user object -->
               <span class="action-icon edit-icon" (click)="openEditModal(user)">✎</span>
@@ -77,7 +81,7 @@
             </td>
           </tr>
           <tr *ngIf="filteredUsers.length === 0">
-            <td colspan="4" class="no-results">Aucun utilisateur trouvé.</td>
+            <td colspan="5" class="no-results">Aucun utilisateur trouvé.</td>
           </tr>
         </tbody>
       </table>
@@ -105,11 +109,22 @@
             <label for="motDePasse">Mot de passe :</label>
             <input type="password" id="motDePasse" [(ngModel)]="newUser.motDePasse" name="motDePasse" required>
           </div>
+
           <div class="form-group">
             <label for="role">Rôle :</label>
             <select id="role" [(ngModel)]="newUser.role" name="role" required>
               <option value="" disabled>Sélectionner un rôle</option>
               <option *ngFor="let role of roles" [value]="role">{{ getDisplayRole(role) }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="depotId">Dépôt :</label>
+            <select id="depotId" [(ngModel)]="newUser.depotId" name="depotId" required>
+              <option [ngValue]="undefined">-- Sélectionner un dépôt --</option>
+              <option *ngFor="let depot of depots" [ngValue]="depot.id">
+                {{ depot.nom }} ({{ depot.ville }})
+              </option>
             </select>
           </div>
 
@@ -143,11 +158,22 @@
             <label for="editMotDePasse">Mot de passe : <small>(Laisser vide pour ne pas changer)</small></label>
             <input type="password" id="editMotDePasse" [(ngModel)]="editingUser.motDePasse" name="editMotDePasse">
           </div>
+
           <div class="form-group">
             <label for="editRole">Rôle :</label>
             <select id="editRole" [(ngModel)]="editingUser.role" name="editRole" required>
               <option value="" disabled>Sélectionner un rôle</option>
               <option *ngFor="let role of editRoles" [value]="role">{{ getDisplayRole(role) }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editDepotId">Dépôt :</label>
+            <select id="editDepotId" [(ngModel)]="editingUser.depotId" name="editDepotId" required>
+              <option [ngValue]="undefined">-- Sélectionner un dépôt --</option>
+              <option *ngFor="let depot of depots" [ngValue]="depot.id">
+                {{ depot.nom }} ({{ depot.ville }})
+              </option>
             </select>
           </div>
 

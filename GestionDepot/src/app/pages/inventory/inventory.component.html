@@ -75,8 +75,8 @@
                   </span>
                 </td>
                 <td>{{ product.nombreLots }}</td>
-                <td>{{ product.dernierPrixVenteHTVA | currency:'EUR' }}</td>
-                <td><strong>{{ product.dernierPrixVenteTTC | currency:'EUR' }}</strong></td>
+                <td>{{ product.dernierPrixVenteHTVA | currency:'TND' }}</td>
+                <td><strong>{{ product.dernierPrixVenteTTC | currency:'TND' }}</strong></td>
                 <td>{{ product.strategieStock }}</td>
                 <td class="actions-cell">
                   <button title="Détails Stock" (click)="viewStockDetails(product)"><i class="fa-solid fa-box-archive"></i></button>
@@ -232,7 +232,7 @@
                 <tr>
                   <td>{{lot.codeBarre}}</td>
                   <td>{{lot.quantiteProduit}}</td>
-                  <td>{{lot.prixVenteTTC|currency:'EUR'}}</td>
+                  <td>{{lot.prixVenteTTC|currency:'TND'}}</td>
                   <td>{{lot.createdAt|date:'dd/MM/yy'}}</td>
                   <td>{{lot.dateExpiration|date:'dd/MM/yy'}}</td>
                 </tr>

@@ -65,7 +65,7 @@ export class BonDeSortieListComponent implements OnInit {
   chauffeurs: ChauffeurListDto[] = [];
 
   // Inputs pour la création d'une facture par chauffeur
-  factureChauffeurProduitId: number | undefined;
+  factureChauffeurProduitId: number | null = null;
   factureChauffeurQuantite: number | undefined;
   
   // Inputs pour la création d'une facture par commande
@@ -223,29 +223,43 @@ export class BonDeSortieListComponent implements OnInit {
 
   // --- Logique pour la facturation ---
 
-  openFacturationModal(bdsListItem: BonDeSortieListItem): void {
-    this.bdsService.getBonDeSortieById(bdsListItem.id).subscribe(
-      (details: BonDeSortie) => {
+
+    openFacturationModal(bdsListItem: BonDeSortieListItem): void {
+    // We only need ONE API call to get all the details, including the lines.
+    this.bdsService.getBonDeSortieById(bdsListItem.id).subscribe({
+      next: (details: BonDeSortie) => {
+        // The 'details' object now contains everything, including the 'lignes' array.
+        // The second API call has been removed.
         this.selectedBdsForFacturation = details;
-        this.factureChauffeurProduitId = undefined;
+  
+        // Reset the form fields for the modal
+        this.factureChauffeurProduitId = null;
         this.factureChauffeurQuantite = undefined;
       },
-      error => {
-        console.error('Erreur lors du chargement des détails pour facturation:', error);
-        alert(`Erreur: ${error.message}`);
+      error: (error) => {
+        console.error('Error loading details for invoicing modal:', error);
+        alert(`Could not load details for this Bon de Sortie: ${error.message}`);
+        // Ensure the modal doesn't try to open with partial data on error
+        this.selectedBdsForFacturation = null;
       }
-    );
+    });
   }
 
   closeFacturationModal(): void {
     this.selectedBdsForFacturation = null;
-    this.factureChauffeurProduitId = undefined;
+    this.factureChauffeurProduitId = null;
     this.factureChauffeurQuantite = undefined;
   }
 
   creerFactureChauffeur(): void {
-    if (!this.selectedBdsForFacturation || !this.selectedBdsForFacturation.id || !this.factureChauffeurProduitId || !this.factureChauffeurQuantite || this.factureChauffeurQuantite <= 0) {
-      alert('Veuillez sélectionner un Bon de Sortie, un produit et une quantité positive.');
+    console.log({
+  selectedBdsForFacturation: this.selectedBdsForFacturation,
+  id: this.selectedBdsForFacturation?.id,
+  produitId: this.factureChauffeurProduitId,
+  quantite: this.factureChauffeurQuantite
+});
+  if (!this.selectedBdsForFacturation || !this.selectedBdsForFacturation.id || this.factureChauffeurProduitId === null || !this.factureChauffeurQuantite || this.factureChauffeurQuantite <= 0) {
+      alert('Veuillez sélectionner un Bon de Sortie, un produit et une quantité correct.');
       return;
     }
 

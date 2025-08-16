@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class LigneBdsDetailDto {
     private Long id;
+    private Long produitId;
     private String nomProduit;
     private int quantiteSortie;
     private int quantiteRetournee;

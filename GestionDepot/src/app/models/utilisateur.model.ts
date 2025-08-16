@@ -14,6 +14,7 @@ export interface Utilisateur {
     modele: string;
     matricule: string;
   };
+  depot?: { id: number; nom: string; ville?: string }; // Ajouté pour accès au dépôt
 }
 
 export interface UtilisateurSimpleDto {
@@ -24,6 +25,7 @@ export interface UtilisateurSimpleDto {
   numeroPermis?: string;
   vehicule?: VehiculeDto; // Utilisera le nouveau VehiculeDto
   role: string; // IMPORTANT: Ensure this is 'string' to match backend enum name
+  depot?: { id: number; nom: string; ville?: string }; // Ajouté pour affichage du dépôt
 }
 
 export interface VehiculeDto {

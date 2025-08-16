@@ -12,7 +12,7 @@
       <select id="commandeId" [(ngModel)]="nouvelleCommandeId" (ngModelChange)="onCommandeChange()">
         <option [ngValue]="undefined">-- Sélectionner une commande validée --</option>
         <option *ngFor="let cmd of commandesValidees" [ngValue]="cmd.id">
-          {{ cmd.id }} - {{ cmd.client?.nom || 'Client inconnu' }} (TTC: {{ cmd.totaleCommandeTTC | currency:'EUR':'symbol':'1.2-2' }})
+          {{ cmd.id }} - {{ cmd.client?.nom || 'Client inconnu' }} (TTC: {{ cmd.totaleCommandeTTC | currency:'TND':'symbol':'1.2-2' }})
         </option>
       </select>
     </div>
@@ -43,7 +43,7 @@
             <tr>
               <td>{{ bds.numeroBDS }}</td>
               <td>{{ bds.chauffeurNom || 'N/A' }}</td>
-              <td>{{ bds.valeurTotaleInitialeTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ bds.valeurTotaleInitialeTTC | currency:'TND':'symbol':'1.2-2' }}</td>
               <td>
                 <span class="status-badge" 
                       [class.status-cree]="bds.statut === StatutBonDeSortie.CREE"
@@ -93,7 +93,7 @@
           N/A
         }
       </p>
-      <p><strong>Valeur Initiale:</strong> {{ selectedBdsForDetails.valeurTotaleInitialeTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Valeur Initiale:</strong> {{ selectedBdsForDetails.valeurTotaleInitialeTTC | currency:'TND':'symbol':'1.2-2' }}</p>
 
       <h4>Lignes du Bon de Sortie</h4>
       <div class="table-wrapper">
@@ -116,7 +116,7 @@
                       <td>{{ ligne.quantiteRetournee }}</td>
                       <td>{{ ligne.quantiteFacturee }}</td>
                       <td><strong>{{ ligne.quantiteDisponiblePourFacturation }}</strong></td>
-                      <td>{{ ligne.prixUnitaireTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                      <td>{{ ligne.prixUnitaireTTC | currency:'TND':'symbol':'1.2-2' }}</td>
                   </tr>
               } @empty {
                   <tr><td colspan="6">Aucune ligne de produit.</td></tr>
@@ -135,7 +135,7 @@
               @for (facture of selectedBdsForDetails.factures; track facture.id) {
                   <tr>
                       <td>{{ facture.numeroFacture }}</td>
-                      <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                      <td>{{ facture.totalTTC | currency:'TND':'symbol':'1.2-2' }}</td>
                       <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
                       <td>{{ facture.statut }}</td>
                   </tr>
@@ -208,17 +208,63 @@
       <h3>Créer Facture pour Bon de Sortie #{{ selectedBdsForFacturation.id }}</h3>
       <button class="close-btn" (click)="closeFacturationModal()">×</button>
     </div>
+    <!-- *** CORRECTED SECTION STARTS HERE *** -->
     <div class="modal-body">
+      <!-- Section 1: A read-only table showing all available products on this BDS for context -->
+      <h4>Produits sur ce Bon de Sortie</h4>
+      <div class="table-wrapper" style="max-height: 200px; margin-bottom: 1.5rem;">
+        <table>
+          <thead>
+              <tr>
+                  <th>Produit</th>
+                  <th>Qté Dispo. Facturation</th>
+                  <th>Qté Déjà Facturée</th>
+              </tr>
+          </thead>
+          <tbody>
+              @for (ligne of selectedBdsForFacturation.lignes; track ligne.id) {
+                  <!-- Add a class to gray out lines that are fully invoiced -->
+                  <tr [class.text-muted]="ligne.quantiteDisponiblePourFacturation <= 0">
+                      <td>{{ ligne.nomProduit }}</td>
+                      <td><strong>{{ ligne.quantiteDisponiblePourFacturation }}</strong></td>
+                      <td>{{ ligne.quantiteFacturee }}</td>
+                  </tr>
+              } @empty {
+                  <tr><td colspan="3">Aucun produit trouvé pour ce bon de sortie.</td></tr>
+              }
+          </tbody>
+        </table>
+      </div>
+    
+      <!-- Section 2: The form for creating the new invoice line -->
       <h4>Ajouter une ligne à la facture</h4>
       <div class="form-group">
-        <label for="produitFactureId">ID Produit:</label>
-        <input type="number" id="produitFactureId" [(ngModel)]="factureChauffeurProduitId" placeholder="ID Produit" />
+        <label for="produitFacture">Produit à facturer :</label>
+        <select id="produitFacture" [(ngModel)]="factureChauffeurProduitId" class="form-control">
+          <option [ngValue]="undefined">-- Sélectionner un produit --</option>
+          @for (ligne of selectedBdsForFacturation.lignes; track ligne.id) {
+            <!-- Only show products that have a quantity available to be invoiced -->
+            @if (ligne.quantiteDisponiblePourFacturation > 0) {
+              <option [ngValue]="ligne.produitId">
+                {{ ligne.nomProduit }} (Max: {{ ligne.quantiteDisponiblePourFacturation }})
+              </option>
+            }
+          }
+        </select>
       </div>
+    
       <div class="form-group">
-        <label for="quantiteFacture">Quantité à facturer:</label>
-        <input type="number" id="quantiteFacture" [(ngModel)]="factureChauffeurQuantite" placeholder="Quantité" />
+        <label for="quantiteFacture">Quantité :</label>
+        <input type="number" 
+               id="quantiteFacture" 
+               [(ngModel)]="factureChauffeurQuantite" 
+               placeholder="Quantité à facturer"
+               min="1"
+               class="form-control" />
       </div>
+      
       <button class="btn btn-primary" (click)="creerFactureChauffeur()">Créer Facture</button>
     </div>
+    <!-- *** CORRECTED SECTION ENDS HERE *** -->
   </div>
 </div>

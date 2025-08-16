@@ -30,9 +30,9 @@
           {{ facture.statut }}
         </span>
       </p>
-      <p><strong>Total HT:</strong> {{ facture.totalHT | currency:'EUR':'symbol':'1.2-2' }}</p>
-      <p><strong>Montant TVA:</strong> {{ facture.montantTVA | currency:'EUR':'symbol':'1.2-2' }}</p>
-      <p><strong>Total TTC:</strong> {{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Total HT:</strong> {{ facture.totalHT | currency:'TND':'symbol':'1.2-2' }}</p>
+      <p><strong>Montant TVA:</strong> {{ facture.montantTVA | currency:'TND':'symbol':'1.2-2' }}</p>
+      <p><strong>Total TTC:</strong> {{ facture.totalTTC | currency:'TND':'symbol':'1.2-2' }}</p>
       <p><strong>Commande ID:</strong> 
         @if (facture.commandeId) {
           <a [routerLink]="['/commandes', facture.commandeId]">{{ facture.commandeId }}</a>

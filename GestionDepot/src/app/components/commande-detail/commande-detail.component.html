@@ -7,7 +7,7 @@
       <p><strong>Client:</strong> {{ commande.client?.nom || 'N/A' }} ({{ commande.client?.email || 'N/A' }})</p>
       <p><strong>Date de Commande:</strong> {{ commande.dateCommande | date:'medium' }}</p>
       <p><strong>Statut:</strong> {{ commande.statutCommande }}</p>
-      <p><strong>Total TTC:</strong> {{ commande.totaleCommandeTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Total TTC:</strong> {{ commande.totaleCommandeTTC | currency:'TND':'symbol':'1.2-2' }}</p>
     </div>
 
     <h3>Lignes de Commande</h3>
@@ -28,7 +28,7 @@
               <td>{{ ligne.id }}</td>
               <td>{{ ligne.nomProduit }} (ID: {{ ligne.produitId }})</td>
               <td>{{ ligne.quantite }}</td>
-              <td>{{ ligne.prixVenteTotalLigneTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ ligne.prixVenteTotalLigneTTC | currency:'TND':'symbol':'1.2-2' }}</td>
               <td>
                 @if (commande.statutCommande === 'EN_COURS') { <!-- Nouvelle syntaxe @if -->
                   <button (click)="initModifierLigne(ligne.id, ligne.quantite)">Modifier Quantité</button>

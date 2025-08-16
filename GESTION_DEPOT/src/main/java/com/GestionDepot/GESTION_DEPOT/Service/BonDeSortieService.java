@@ -189,6 +189,7 @@ public class BonDeSortieService {
         List<LigneBdsDetailDto> lignesDto = lignes.stream()
                 .map(ligne -> new LigneBdsDetailDto(
                         ligne.getId(),
+                        ligne.getProduit().getId(),
                         ligne.getProduit().getNom(),
                         ligne.getQuantiteSortie(),
                         ligne.getQuantiteRetournee(),
@@ -237,4 +238,18 @@ public class BonDeSortieService {
 
         return new VerificationBDS_DTO(bdsId, bds.getNumeroBDS(), valeurInitiale, totalVendu, valeurRetour, ecart, statutCoherence);
     }
+    @Transactional(readOnly = true)
+    public List<ProduitDTO> getProduitsDTOParBonDeSortie(Long bdsId) {
+        BonDeSortie bds = bonDeSortieRepository.findById(bdsId)
+                .orElseThrow(() -> new EntityNotFoundException("Bon de sortie non trouvé avec l'ID : " + bdsId));
+
+        return bds.getLignes()
+                .stream()
+                .map(ligne -> new ProduitDTO(ligne.getProduit())) // ✅ Utilisation directe de ton constructeur
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+
+
 }

@@ -5,14 +5,12 @@ export interface UtilisateurRequestDto {
   email: string;
   motDePasse: string;
   role: string;
+  depotId?: number; // Rendu optionnel pour permettre undefined
 
-  // These fields correspond to the backend's 'Vehicule' and 'Chauffeur' specific fields.
-  // They are optional here because this specific modal (for UtilisateurComponent)
-  // will *not* collect them, as per your requirement to handle chauffeurs separately.
-  // The backend will apply validation (e.g., 'numeroPermis' required if role is CHAUFFEUR).
-  telephone?: string; // Backend assigns if present.
-  numeroPermis?: string; // Matched to backend's 'getNumeroPermis'
-  marqueVehicule?: string; // Corrected from 'vehiculeMarque' to match backend's 'getMarqueVehicule'
-  modeleVehicule?: string; // Corrected from 'vehiculeModele' to match backend's 'getModeleVehicule'
-  matriculeVehicule?: string; // Corrected from 'vehiculeMatricule' to match backend's 'getMatriculeVehicule'
+  // Champs optionnels pour chauffeur
+  telephone?: string;
+  numeroPermis?: string;
+  marqueVehicule?: string;
+  modeleVehicule?: string;
+  matriculeVehicule?: string;
 }

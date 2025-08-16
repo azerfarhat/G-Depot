@@ -147,8 +147,6 @@ public class DepotService {
         dto.setAdresse(depot.getAdresse());
         dto.setTelephone(depot.getTelephone());
         dto.setTva(depot.getTva());
-
-        // Mappage des NOUVEAUX CHAMPS
         dto.setVille(depot.getVille());
         dto.setCodePostal(depot.getCodePostal());
         dto.setZone(depot.getZone());
@@ -176,7 +174,8 @@ public class DepotService {
                                     responsable.getVehicule().getModele(),
                                     responsable.getVehicule().getMatricule()
                             ) : null,
-                    responsable.getRole()
+                    responsable.getRole(),
+                    null // Ajoutez ce champ si UtilisateurSimpleDto a un champ depot
             );
             dto.setResponsable(responsableDto);
         }

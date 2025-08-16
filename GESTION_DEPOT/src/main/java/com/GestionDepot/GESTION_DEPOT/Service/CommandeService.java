@@ -49,8 +49,7 @@ public class CommandeService {
         Commande nouvelleCommande = new Commande();
         nouvelleCommande.setClient(client);
         nouvelleCommande.setStatutCommande(StatutCommande.EN_COURS);
-        // La date de commande sera gérée par @CreatedDate
-        Commande commandeSauvegardee = commandeRepository.save(nouvelleCommande);
+         Commande commandeSauvegardee = commandeRepository.save(nouvelleCommande);
         System.out.println("Info : Création d'une nouvelle commande pour le client ID " + clientId);
         return mapCommandeToDto(commandeSauvegardee);
     }

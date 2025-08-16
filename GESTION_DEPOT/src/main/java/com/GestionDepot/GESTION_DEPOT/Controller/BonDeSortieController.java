@@ -1,11 +1,7 @@
 package com.GestionDepot.GESTION_DEPOT.Controller;
 
 // Assurez-vous d'avoir les bons imports pour les DTOs
-import com.GestionDepot.GESTION_DEPOT.dto.BonDeSortieCreeDto;
-import com.GestionDepot.GESTION_DEPOT.dto.BonDeSortieListDTO;
-import com.GestionDepot.GESTION_DEPOT.dto.BonDeSortieDetailDto;
-import com.GestionDepot.GESTION_DEPOT.dto.RetourProduitDTO;
-import com.GestionDepot.GESTION_DEPOT.dto.VerificationBDS_DTO;
+import com.GestionDepot.GESTION_DEPOT.dto.*;
 
 import com.GestionDepot.GESTION_DEPOT.Service.BonDeSortieService;
 import jakarta.persistence.EntityNotFoundException;

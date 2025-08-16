@@ -19,7 +19,7 @@
           N/A
         }
       </p>
-      <p><strong>Valeur Totale Initiale:</strong> {{ bonDeSortie.valeurTotaleInitialeTTC | currency:'EUR':'symbol':'1.2-2' }}</p>
+      <p><strong>Valeur Totale Initiale:</strong> {{ bonDeSortie.valeurTotaleInitialeTTC | currency:'TND':'symbol':'1.2-2' }}</p>
     </div>
 
     <!-- Section des produits du Bon de Sortie -->
@@ -45,7 +45,7 @@
               <td>{{ ligne.quantiteRetournee }}</td>
               <td>{{ ligne.quantiteFacturee }}</td>
               <td><strong>{{ ligne.quantiteDisponiblePourFacturation }}</strong></td>
-              <td>{{ ligne.prixUnitaireTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ ligne.prixUnitaireTTC | currency:'TND':'symbol':'1.2-2' }}</td>
             </tr>
           }
         </tbody>
@@ -74,7 +74,7 @@
               <tr>
                 <td>{{ facture.numeroFacture }}</td>
                 <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
-                <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                <td>{{ facture.totalTTC | currency:'TND':'symbol':'1.2-2' }}</td>
                 <td>{{ facture.statut }}</td>
                 <td>
                   <!-- Bouton pour voir les détails d'une facture spécifique -->

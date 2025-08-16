@@ -19,15 +19,15 @@
             margin-bottom: 5px;
         }
         .info-bloc {
-            display: flex; /* Flexbox pour aligner côte à côte */
+            display: flex;
             justify-content: space-between;
             margin-bottom: 20mm;
         }
         .info-client, .info-facture {
-            width: 48%; /* Répartir l'espace */
+            width: 48%;
             border: 1px solid #eee;
             padding: 10px;
-            box-sizing: border-box; /* Inclure padding et border dans la largeur */
+            box-sizing: border-box;
         }
         .info-facture {
             text-align: right;
@@ -46,9 +46,15 @@
             background-color: #f2f2f2;
             font-weight: bold;
         }
+        .even-row { background: #f9f9f9; }
+        .odd-row { background: #fff; }
         .total-section {
             text-align: right;
             margin-top: 20mm;
+            border:1px solid #eee;
+            padding:16px;
+            border-radius:8px;
+            background:#fafbfc;
         }
         .total-row {
             padding: 5px 0;
@@ -57,6 +63,26 @@
         .total-row strong {
             display: inline-block;
             width: 120px;
+        }
+        .total-row.final {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #357abd;
+        }
+        .signature-zone {
+            margin-top:40mm;
+            display:flex;
+            justify-content:space-between;
+        }
+        .signature-block {
+            width: 200px;
+            text-align: center;
+        }
+        .signature-line {
+            border-bottom:1px solid #aaa;
+            width:180px;
+            height:40px;
+            margin:20px auto 0 auto;
         }
         .footer {
             text-align: center;
@@ -78,16 +104,16 @@
 
 <div class="info-bloc">
     <div class="info-client">
-        <strong>Facturé à:</strong><br /> <!-- CORRECTION ICI -->
-        <span th:if="${facture.client}" th:text="${facture.client.nom}">Nom Client</span><br /> <!-- CORRECTION ICI -->
-        <span th:if="${facture.client}" th:text="${facture.client.email}">Email Client</span><br /> <!-- CORRECTION ICI -->
-        <span th:if="${facture.chauffeur}" th:text="${facture.chauffeur.nom}">Nom Chauffeur</span><br /> <!-- CORRECTION ICI -->
+        <strong>Facturé à:</strong><br />
+        <span th:if="${facture.client}" th:text="${facture.client.nom}">Nom Client</span><br />
+        <span th:if="${facture.client}" th:text="${facture.client.email}">Email Client</span><br />
+        <span th:if="${facture.chauffeur}" th:text="${facture.chauffeur.nom}">Nom Chauffeur</span><br />
         <span th:if="${facture.chauffeur}" th:text="${facture.chauffeur.email}">Email Chauffeur</span>
     </div>
     <div class="info-facture">
-        <strong>N° Facture:</strong> <span th:text="${facture.numeroFacture}">[Numéro Facture]</span><br /> <!-- CORRECTION ICI -->
-        <strong>Date Facturation:</strong> <span th:text="${#temporals.format(facture.dateFacturation, 'dd/MM/yyyy')}">[Date Facturation]</span><br /> <!-- CORRECTION ICI -->
-        <strong>Date Échéance:</strong> <span th:text="${#temporals.format(facture.dateEcheance, 'dd/MM/yyyy')}">[Date Échéance]</span><br /> <!-- CORRECTION ICI -->
+        <strong>N° Facture:</strong> <span th:text="${facture.numeroFacture}">[Numéro Facture]</span><br />
+        <strong>Date Facturation:</strong> <span th:text="${facture.dateFacturation}">[Date Facturation]</span><br />
+        <strong>Date Échéance:</strong> <span th:text="${facture.dateEcheance}">[Date Échéance]</span><br />
         <strong>Statut:</strong> <span th:text="${facture.statut}">[Statut]</span>
     </div>
 </div>
@@ -102,19 +128,30 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="ligne : ${facture.lignes}">
-        <td th:text="${ligne.produit.nom}">Produit X</td>
+    <tr th:each="ligne,iter : ${facture.lignes}" th:classappend="${iter.index % 2 == 0} ? 'even-row' : 'odd-row'">
+        <td th:text="${ligne.produitNom}">Produit X</td>
         <td th:text="${ligne.quantite}">1</td>
-        <td th:text="${#numbers.formatDecimal(ligne.prixUnitaireTTC, 1, 'POINT', 2, 'COMMA')} + ' €'">100.00 €</td>
-        <td th:text="${#numbers.formatDecimal(ligne.totalLigneTTC, 1, 'POINT', 2, 'COMMA')} + ' €'">100.00 €</td>
+        <td th:text="${ligne.prixUnitaireTTC}">100,00 €</td>
+        <td th:text="${ligne.totalLigneTTC}">100,00 €</td>
     </tr>
     </tbody>
 </table>
 
 <div class="total-section">
-    <p class="total-row"><strong>Total HT:</strong> <span th:text="${#numbers.formatDecimal(facture.totalHT, 1, 'POINT', 2, 'COMMA')} + ' €'"></span></p>
-    <p class="total-row"><strong>Montant TVA:</strong> <span th:text="${#numbers.formatDecimal(facture.montantTVA, 1, 'POINT', 2, 'COMMA')} + ' €'"></span></p>
-    <p class="total-row"><strong>Total TTC:</strong> <span th:text="${#numbers.formatDecimal(facture.totalTTC, 1, 'POINT', 2, 'COMMA')} + ' €'"></span></p>
+    <p class="total-row"><strong>Total HT:</strong> <span th:text="${facture.totalHT}"></span></p>
+    <p class="total-row"><strong>Montant TVA:</strong> <span th:text="${facture.montantTVA}"></span></p>
+    <p class="total-row final"><strong>Total TTC:</strong> <span th:text="${facture.totalTTC}"></span></p>
+</div>
+
+<div class="signature-zone">
+    <div class="signature-block">
+        <strong>Signature Client</strong>
+        <div class="signature-line"></div>
+    </div>
+    <div class="signature-block">
+        <strong>Signature Entreprise</strong>
+        <div class="signature-line"></div>
+    </div>
 </div>
 
 <div class="footer">

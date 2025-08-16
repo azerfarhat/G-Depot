@@ -68,6 +68,13 @@ export class BonDeSortieService {
       catchError(this.handleError)
     );
   }
+// GET /api/bons-de-sortie/{id}/produit
+  getProduitsParBonDeSortie(bdsId: number): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any[]>(`${this.baseUrl}/${bdsId}/produits`, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   // --- Gestion d'erreurs générique ---
   private handleError(error: HttpErrorResponse) {

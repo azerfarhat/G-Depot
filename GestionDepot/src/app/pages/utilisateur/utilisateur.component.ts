@@ -4,6 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { UtilisateurService } from '../../services/utilisateur.service';
 import { UtilisateurSimpleDto, Utilisateur } from '../../models/utilisateur.model'; // Import Utilisateur for full details
 import { UtilisateurRequestDto } from '../../models/utilisateur-request.model';
+import { DepotService } from '../../services/depot.service';
+import { DepotDto } from '../../models/depot.model';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -30,6 +32,7 @@ export class UtilisateurComponent implements OnInit {
   showAddUserModal: boolean = false;
   newUser: UtilisateurRequestDto = this.initializeNewUser();
   roles: string[] = ['ADMIN', 'RESPONSABLE', 'EMPLOYE', 'CLIENT']; // Roles for add modal
+  depots: DepotDto[] = [];
 
   // Edit User Modal properties
   showEditUserModal: boolean = false;
@@ -46,10 +49,18 @@ export class UtilisateurComponent implements OnInit {
   userToDelete: UtilisateurSimpleDto | null = null;
   confirmMessage: string = '';
 
-  constructor(private utilisateurService: UtilisateurService) { }
+  constructor(private utilisateurService: UtilisateurService, private depotService: DepotService) { }
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadDepots();
+  }
+
+  loadDepots(): void {
+    this.depotService.getAllDepots().subscribe({
+      next: (data) => this.depots = data,
+      error: (err) => console.error('Erreur lors du chargement des dépôts:', err)
+    });
   }
 
   loadUsers(): void {
@@ -158,6 +169,7 @@ export class UtilisateurComponent implements OnInit {
       email: '',
       motDePasse: '',
       role: '',
+      depotId: undefined,
       telephone: undefined,
       numeroPermis: undefined,
       marqueVehicule: undefined,
@@ -169,8 +181,8 @@ export class UtilisateurComponent implements OnInit {
  // Part of src/app/utilisateur/utilisateur.component.ts
 
 submitNewUser(): void {
-    if (!this.newUser.nom || !this.newUser.email || !this.newUser.motDePasse || !this.newUser.role) {
-      this.showNotification('Veuillez remplir tous les champs obligatoires (Nom, Email, Mot de passe, Rôle).', 'error');
+    if (!this.newUser.nom || !this.newUser.email || !this.newUser.motDePasse || !this.newUser.role || !this.newUser.depotId) {
+      this.showNotification('Veuillez remplir tous les champs obligatoires (Nom, Email, Mot de passe, Rôle, Dépôt).', 'error');
       return;
     }
 
@@ -211,6 +223,7 @@ submitNewUser(): void {
           email: fullUser.email,
           motDePasse: '', // Password not pre-filled for security, user can leave empty to not change
           role: fullUser.role,
+          depotId: fullUser.depot?.id || undefined,
           // Chauffeur specific fields - populate if they exist, otherwise undefined
           telephone: fullUser.telephone || undefined,
           numeroPermis: fullUser.numeroPermis || undefined,
@@ -239,8 +252,8 @@ submitNewUser(): void {
       return;
     }
 
-    if (!this.editingUser.nom || !this.editingUser.email || !this.editingUser.role) {
-      this.showNotification('Veuillez remplir le nom, l\'email et le rôle.', 'error');
+    if (!this.editingUser.nom || !this.editingUser.email || !this.editingUser.role || !this.editingUser.depotId) {
+      this.showNotification('Veuillez remplir le nom, l\'email, le rôle et le dépôt.', 'error');
       return;
     }
 

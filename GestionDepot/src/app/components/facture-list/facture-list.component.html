@@ -51,7 +51,7 @@
               </td>
               <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
               <td>{{ facture.dateEcheance | date:'mediumDate' }}</td>
-              <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ facture.totalTTC | currency:'TND':'symbol':'1.2-2' }}</td>
               <td>
             <span class="status-badge" 
                     [class.status-emise]="facture.statut === StatutFacture.EMISE"

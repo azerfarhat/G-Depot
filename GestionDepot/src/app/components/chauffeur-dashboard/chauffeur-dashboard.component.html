@@ -8,23 +8,23 @@
     <div class="stats-grid">
       <div class="stat-card">
         <h5>Marchandises Prises</h5>
-        <h3>{{ data.stats.totalPrix | currency:'EUR' }}</h3>
+        <h3>{{ data.stats.totalPrix | currency:'TND' }}</h3>
         <span>Total des sorties</span>
       </div>
       <div class="stat-card stat-success">
         <h5>Marchandises Vendues</h5>
-        <h3>{{ data.stats.totalVendu | currency:'EUR' }}</h3>
+        <h3>{{ data.stats.totalVendu | currency:'TND' }}</h3>
         <span>Chiffre d'affaires</span>
       </div>
       <div class="stat-card stat-warning">
         <h5>Marchandises Retournées</h5>
-        <h3>{{ data.stats.totalRetourne | currency:'EUR' }}</h3>
+        <h3>{{ data.stats.totalRetourne | currency:'TND' }}</h3>
         <span>Invendus</span>
       </div>
       <div class="stat-card stat-primary">
         <h5>Marge Bénéficiaire</h5>
         <!-- CORRECTION : margeTotale -> margeBeneficiaire -->
-        <h3>{{ data.stats.margeBeneficiaire | currency:'EUR' }}</h3>
+        <h3>{{ data.stats.margeBeneficiaire | currency:'TND' }}</h3>
         <span>Profit total</span>
       </div>
     </div>
@@ -60,10 +60,10 @@
                 <tr *ngFor="let bds of data.historiqueBons">
                     <td>{{ bds.numeroBDS }}</td>
                     <td>{{ bds.dateSortie | date:'dd/MM/yyyy' }}</td>
-                    <td>{{ bds.valeurInitiale | currency:'EUR' }}</td>
-                    <td class="text-success">{{ bds.valeurVendue | currency:'EUR' }}</td>
-                    <td class="text-warning">{{ bds.valeurRetournee | currency:'EUR' }}</td>
-                    <td [class.text-danger]="bds.marge < 0">{{ bds.marge | currency:'EUR' }}</td>
+                    <td>{{ bds.valeurInitiale | currency:'TND' }}</td>
+                    <td class="text-success">{{ bds.valeurVendue | currency:'TND' }}</td>
+                    <td class="text-warning">{{ bds.valeurRetournee | currency:'TND' }}</td>
+                    <td [class.text-danger]="bds.marge < 0">{{ bds.marge | currency:'TND' }}</td>
                     <td><span class="status-badge" [class.status-ok]="bds.statut === 'Livré'">{{ bds.statut }}</span></td>
                 </tr>
             </tbody>

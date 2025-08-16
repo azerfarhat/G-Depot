@@ -64,6 +64,15 @@
               <div class="form-group"><label for="email">Email</label><input type="email" id="email" formControlName="email"></div>
               <div class="form-group"><label for="motDePasse">Mot de Passe <small *ngIf="editingChauffeurId">(laisser vide pour ne pas changer)</small></label><input type="password" id="motDePasse" formControlName="motDePasse"></div>
               <div class="form-group"><label for="telephone">Téléphone</label><input type="text" id="telephone" formControlName="telephone"></div>
+              <div class="form-group">
+                <label for="depotId">Dépôt :</label>
+                <select id="depotId" formControlName="depotId" required>
+                  <option [ngValue]="null">-- Sélectionner un dépôt --</option>
+                  <option *ngFor="let depot of depots" [ngValue]="depot.id">
+                    {{ depot.nom }} ({{ depot.ville }})
+                  </option>
+                </select>
+              </div>
             </div>
 
             <h3 class="section-title">Informations Professionnelles</h3>
@@ -76,7 +85,8 @@
 
             <div class="modal-actions">
               <button type="button" class="btn-cancel" (click)="closeModal()">Annuler</button>
-              <button type="submit" class="btn-primary" [disabled]="isSubmitting || chauffeurForm.invalid">
+              <button type="submit" class="btn-primary"
+                [disabled]="isSubmitting || chauffeurForm.invalid || (editingChauffeurId && !chauffeurForm.dirty)">
                 {{ isSubmitting ? 'Enregistrement...' : (editingChauffeurId ? 'Mettre à jour' : 'Enregistrer') }}
               </button>
             </div>
@@ -130,7 +140,7 @@
                     <tr>
                       <td>{{ facture.numeroFacture }}</td>
                       <td>{{ facture.dateFacturation | date:'mediumDate' }}</td>
-                      <td>{{ facture.totalTTC | currency:'EUR':'symbol':'1.2-2' }}</td>
+                      <td>{{ facture.totalTTC | currency:'TND':'symbol':'1.2-2' }}</td>
                       <td>{{ facture.statut }}</td>
                     </tr>
                   }
